@@ -2,7 +2,7 @@
 
 Memory mit eigenen Tuschezeichnungen, als installierbare Web-App (PWA).
 
-**Spielen:** https://bcakebreakfast.github.io/memory/
+**Spielen:** https://bcakebreakfast.github.io/Memory/
 
 ## So funktioniert's
 - Start mit 2 Bildern. Neue Bilder gibt es nach 2, 3, 4 und 5 gewonnenen Runden. Jedes Bild bringt ein Paar mehr.

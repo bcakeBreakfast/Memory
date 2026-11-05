@@ -29,7 +29,7 @@ img{-webkit-user-drag:none}
 .lbl{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
 [hidden]{display:none!important}
 
-#app{position:relative;height:100vh;height:100dvh;max-width:560px;margin:0 auto;overflow:hidden}
+#app{position:relative;height:100vh;height:100svh;max-width:560px;margin:0 auto;overflow:hidden}
 .view{position:absolute;left:0;right:0;top:0;bottom:calc(var(--tab) + var(--bot));display:none;flex-direction:column;padding:calc(16px + var(--top)) 24px 16px;gap:16px}
 .view.on{display:flex;animation:viewIn .3s cubic-bezier(.2,1.2,.4,1) both}
 .view.full{bottom:0;padding-bottom:calc(24px + var(--bot))}
@@ -239,7 +239,7 @@ body.calm .fx,body.calm .flash{display:none}
 <!-- START -->
 <section class="view" id="v-home" aria-label="Start">
   <div class="top"><span class="pill">Runde <span data-round>1</span></span><span class="pill" style="background:var(--p);color:var(--w)" id="hStage" hidden></span></div>
-  <h1 class="h title">Memo<br><span>Punch!</span></h1>
+  <h1 class="h title" data-fit>Memo<br><span>Punch!</span></h1>
   <div class="fan" id="fan" aria-hidden="true"></div>
   <div class="box next" id="nextBox">
     <div class="tease" id="nTease"><img alt=""></div>
@@ -251,13 +251,13 @@ body.calm .fx,body.calm .flash{display:none}
 
 <!-- SAMMLUNG -->
 <section class="view" id="v-collection" aria-label="Sammlung">
-  <div class="top"><h2 class="h" style="font-size:36px">Sammlung</h2><span class="pill"><span data-count>2</span> / 6</span></div>
+  <div class="top"><h2 class="h" data-fit style="font-size:36px">Sammlung</h2><span class="pill"><span data-count>2</span> / 6</span></div>
   <div class="grid" id="grid"></div>
 </section>
 
 <!-- STATISTIK -->
 <section class="view" id="v-stats" aria-label="Statistik">
-  <div class="top"><h2 class="h" style="font-size:36px">Statistik</h2></div>
+  <div class="top"><h2 class="h" data-fit style="font-size:36px">Statistik</h2></div>
   <div class="kpis">
     <div class="box kpi p"><b id="kWon">0</b><span>Runden gewonnen</span></div>
     <div class="box kpi"><b id="kPairs">0</b><span>Paare gefunden</span></div>
@@ -270,7 +270,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <!-- EINSTELLUNGEN -->
 <section class="view" id="v-settings" aria-label="Einstellungen">
-  <div class="top"><h2 class="h" style="font-size:36px">Optionen</h2></div>
+  <div class="top"><h2 class="h" data-fit style="font-size:36px">Optionen</h2></div>
   <div class="box list">
     <button class="row" role="switch" data-set="sound" aria-checked="true"><span>Töne<small>Klicks, Treffer, Fanfare</small></span><span class="tg" aria-hidden="true"></span></button>
     <button class="row" role="switch" data-set="haptic" aria-checked="true"><span>Vibration<small>Nur auf Android</small></span><span class="tg" aria-hidden="true"></span></button>
@@ -307,7 +307,7 @@ body.calm .fx,body.calm .flash{display:none}
 <!-- PAUSE -->
 <div class="ov dim" id="o-pause" role="dialog" aria-label="Pause">
   <div class="box modal">
-    <h2 class="h" style="font-size:44px">Pause</h2>
+    <h2 class="h" data-fit style="font-size:44px">Pause</h2>
     <button class="big" id="pResume"><span>Weiter</span><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg></button>
     <button class="big w" id="pRestart"><span>Neu mischen</span></button>
     <button class="ghost" id="pQuit">Zum Menü</button>
@@ -316,7 +316,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <!-- GEWONNEN -->
 <div class="ov dark" id="o-win" role="dialog" aria-label="Runde geschafft">
-  <h2 class="h h2">Runde <span id="wRound">1</span><br>Gepackt!</h2>
+  <h2 class="h h2" data-fit>Runde <span id="wRound">1</span><br>Gepackt!</h2>
   <div class="wstats"><span><span id="wMoves">0</span> Züge</span><span id="wTime">0:00</span><span class="rec" id="wRec" hidden>Rekord!</span></div>
   <div class="reveal">
     <div class="reveal" id="wNew"><div class="burst" aria-hidden="true"></div><span class="tag" id="wTag">Neues Bild!</span><img id="wImg" alt="Neu freigeschaltetes Bild"></div>
@@ -330,7 +330,7 @@ body.calm .fx,body.calm .flash{display:none}
 <!-- VERLOREN -->
 <div class="ov dim" id="o-lose" role="dialog" aria-label="Runde verloren">
   <div class="box modal" style="background:var(--p);color:var(--w)">
-    <h2 class="h" style="font-size:44px;line-height:.9">Zu viele<br>Fehler!</h2>
+    <h2 class="h" data-fit style="font-size:44px;line-height:.9">Zu viele<br>Fehler!</h2>
     <p>Die Karten werden neu gemischt. Du schaffst das.</p>
     <button class="big y" id="lRetry"><span>Nochmal</span></button>
     <button class="ghost" id="lQuit" style="color:var(--w)">Zum Menü</button>
@@ -348,7 +348,7 @@ body.calm .fx,body.calm .flash{display:none}
 <!-- BESTÄTIGEN -->
 <div class="ov dim" id="o-confirm" role="alertdialog" aria-label="Bestätigen">
   <div class="box modal">
-    <h2 class="h" style="font-size:32px" id="cTitle">Sicher?</h2>
+    <h2 class="h" data-fit style="font-size:32px" id="cTitle">Sicher?</h2>
     <p id="cText"></p>
     <button class="big" id="cOk"><span id="cOkLbl">Ja</span></button>
     <button class="ghost" id="cNo">Abbrechen</button>
@@ -359,9 +359,9 @@ body.calm .fx,body.calm .flash{display:none}
 <div class="ov" id="o-intro" role="dialog" aria-label="Anleitung">
   <div class="top"><span class="pill">So geht's</span><button class="ghost" id="iSkip">Überspringen</button></div>
   <div class="slides">
-    <div class="slide on"><div class="art" id="art1"></div><h2 class="h">Gut<br>hinschauen!</h2><p>Am Anfang liegen alle Karten kurz offen. Der Balken zeigt, wie lange noch.</p></div>
-    <div class="slide"><div class="art" id="art2"></div><h2 class="h">Paare<br>finden!</h2><p>Deck zwei Karten auf. Gleiches Bild? Paar! Sonst drehen sie sich wieder um.</p></div>
-    <div class="slide"><div class="art" id="art3"></div><h2 class="h">Bilder<br>sammeln!</h2><p>Gewinn Runden und schalte neue Bilder frei. Jedes Bild braucht ein paar Siege mehr – und bringt ein Paar mehr.</p></div>
+    <div class="slide on"><div class="art" id="art1"></div><h2 class="h" data-fit>Gut<br>hinschauen!</h2><p>Am Anfang liegen alle Karten kurz offen. Der Balken zeigt, wie lange noch.</p></div>
+    <div class="slide"><div class="art" id="art2"></div><h2 class="h" data-fit>Paare<br>finden!</h2><p>Deck zwei Karten auf. Gleiches Bild? Paar! Sonst drehen sie sich wieder um.</p></div>
+    <div class="slide"><div class="art" id="art3"></div><h2 class="h" data-fit>Bilder<br>sammeln!</h2><p>Gewinn Runden und schalte neue Bilder frei. Jedes Bild braucht ein paar Siege mehr – und bringt ein Paar mehr.</p></div>
   </div>
   <div class="dots" id="iDots"><i class="on"></i><i></i><i></i></div>
   <button class="big" id="iNext"><span id="iLbl">Weiter</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
@@ -371,7 +371,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <div class="ov dim" id="o-ios" role="dialog" aria-label="Auf iPhone installieren">
   <div class="box modal">
-    <h2 class="h" style="font-size:32px;line-height:.95">Auf den<br>Homebildschirm</h2>
+    <h2 class="h" data-fit style="font-size:32px;line-height:.95">Auf den<br>Homebildschirm</h2>
     <p>1. Unten in Safari auf <b>Teilen</b> tippen (Quadrat mit Pfeil nach oben).</p>
     <p>2. <b>Zum Home-Bildschirm</b> wählen und <b>Hinzufügen</b> tippen.</p>
     <p>Danach startet Memo Punch im Vollbild und läuft auch offline.</p>
@@ -422,11 +422,19 @@ const SFX={
   lose:()=>[392,330,262].forEach((f,i)=>tone(f,.2,'sawtooth',.06,i*.14))};
 const buzz=p=>{if(!S.set.haptic)return;try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 
+
+/* Überschriften an die Breite anpassen */
+function fit(){document.querySelectorAll('[data-fit]').forEach(el=>{if(!el.offsetWidth)return;el.style.fontSize='';
+  let fs=parseFloat(getComputedStyle(el).fontSize),g=0;while(el.scrollWidth>el.clientWidth+1&&fs>16&&g++<60){fs-=1.5;el.style.fontSize=fs+'px'}})}
+const fitSoon=()=>requestAnimationFrame(fit);
+addEventListener('resize',fitSoon);
+try{document.fonts.ready.then(fitSoon)}catch(e){}
+
 /* Navigation */
 const TABS={home:'v-home',collection:'v-collection',stats:'v-stats',settings:'v-settings'};
 const HASH={home:'spielen',collection:'sammlung',stats:'statistik',settings:'optionen'};
 let tab='home';
-function showView(id){$$('.view').forEach(v=>v.classList.toggle('on',v.id===id));$('#tabbar').classList.toggle('off',id==='v-game')}
+function showView(id){$$('.view').forEach(v=>v.classList.toggle('on',v.id===id));$('#tabbar').classList.toggle('off',id==='v-game');fitSoon()}
 function goTab(t,fromHash){
   if(!TABS[t])t='home';tab=t;
   $$('[data-tab]').forEach(b=>b.dataset.tab===t?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
@@ -436,7 +444,7 @@ function goTab(t,fromHash){
 }
 $$('[data-tab]').forEach(b=>b.addEventListener('click',()=>{SFX.tap();goTab(b.dataset.tab)}));
 addEventListener('hashchange',()=>{const t=Object.keys(HASH).find(k=>HASH[k]===location.hash.slice(1));if(t&&!$('#v-game').classList.contains('on'))goTab(t,true)});
-function openOv(id){$('#'+id).classList.add('on')}
+function openOv(id){$('#'+id).classList.add('on');fitSoon()}
 function closeOv(id){$('#'+id).classList.remove('on')}
 
 /* Start */
@@ -512,7 +520,7 @@ function openIntro(){slide=0;drawSlide();
   $('#art2').innerHTML='<div class="mini" style="transform:translate(-58%,0) rotate(-6deg)"><img src="'+IMGS[1]+'" alt=""></div><div class="mini" style="transform:translate(58%,0) rotate(6deg)"><img src="'+IMGS[1]+'" alt=""></div><span class="tag" style="position:absolute;transform:translate(0,90px) rotate(-6deg);background:var(--p);color:var(--w)">Paar!</span>';
   $('#art3').innerHTML='<div class="burst" style="width:min(64vw,34vh,280px)"></div><div class="mini" style="transform:rotate(-5deg)"><img src="'+IMGS[2]+'" alt=""></div>';
   openOv('o-intro')}
-function drawSlide(){$$('.slide').forEach((s,i)=>s.classList.toggle('on',i===slide));$$('#iDots i').forEach((d,i)=>d.classList.toggle('on',i===slide));$('#iLbl').textContent=slide===2?'Los geht’s!':'Weiter'}
+function drawSlide(){$$('.slide').forEach((s,i)=>s.classList.toggle('on',i===slide));$$('#iDots i').forEach((d,i)=>d.classList.toggle('on',i===slide));$('#iLbl').textContent=slide===2?'Los geht’s!':'Weiter';fitSoon()}
 function endIntro(){S.intro=true;save();closeOv('o-intro')}
 $('#iNext').addEventListener('click',()=>{SFX.tap();if(slide<2){slide++;drawSlide()}else endIntro()});
 $('#iSkip').addEventListener('click',endIntro);
@@ -637,7 +645,7 @@ $('#lQuit').addEventListener('click',()=>{SFX.tap();toMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&$('#v-game').classList.contains('on')&&!$('#o-pause').classList.contains('on')){acc+=Date.now()-t0;clock(false);openOv('o-pause')}});
 
 /* PWA: Offline, Updates, Installieren */
-const VERSION='1.0.0';$('#ver').textContent=VERSION;
+const VERSION='1.0.1';$('#ver').textContent=VERSION;
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 let deferredPrompt=null;
