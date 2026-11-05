@@ -1,5 +1,5 @@
 /* Memo Punch Service Worker: alles vorab cachen, offline aus dem Cache spielen. */
-const CACHE = 'memo-punch-1.1.0';
+const CACHE = 'memo-punch-1.1.1';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './img/t1.svg', './img/t2.svg', './img/t3.svg', './img/t4.svg', './img/t5.svg', './img/t6.svg',
