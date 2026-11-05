@@ -1,0 +1,23 @@
+{
+  "name": "Memo Punch",
+  "short_name": "Memo Punch",
+  "description": "Memory mit Tuschezeichnungen. Finde Paare, sammle Bilder, knack die Meisterstufen.",
+  "id": "./",
+  "start_url": "./#spielen",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFE600",
+  "theme_color": "#FFE600",
+  "lang": "de",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Sammlung", "url": "./#sammlung", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Statistik", "url": "./#statistik", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
