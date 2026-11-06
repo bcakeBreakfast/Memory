@@ -17,7 +17,7 @@ Memory mit eigenen Tuschezeichnungen, als installierbare Web-App (PWA).
 Läuft danach im Vollbild und offline. Spielstand bleibt auf dem Gerät.
 
 ## Deine Texte eintragen
-Alle Texte über die Künstlerin und die Geschichten zu den Bildern stehen in **`content.js`**.
+Alle Texte über das Projekt, die beiden Menschen dahinter (Zeichnungen sowie Webdesign & Entwicklung) und die Geschichten zu den Bildern stehen in **`content.js`**. Die Namen „Ella Strich“ und „Max Raster“ sind Platzhalter.
 1. Auf GitHub die Datei `content.js` öffnen und auf den Stift (Edit) klicken.
 2. Nur die Texte zwischen den Anführungszeichen ändern, jeweils `de` (Deutsch) und `en` (Englisch).
 3. Unten auf **Commit changes** klicken. Nach 1–2 Minuten ist es online, die App zeigt „Neue Version da!“.
@@ -30,7 +30,7 @@ Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischal
 
 ## Dateien
 - `index.html`: die ganze App (Designsystem-Tokens oben im CSS)
-- `content.js`: Künstlerin, Bildtitel und Geschichten (DE/EN)
+- `content.js`: Projekttext, Personen, Bildtitel und Geschichten (DE/EN)
 - `i18n.js`: alle Oberflächentexte Deutsch/Englisch
 - `sw.js`: Offline-Cache. Bei jeder neuen Version die Zahl in `CACHE` und `VERSION` (in index.html) erhöhen.
 - `manifest.webmanifest`, `icons/`: Name, Farben, App-Icons

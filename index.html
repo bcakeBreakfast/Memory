@@ -256,7 +256,17 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .t-tusche #o-detail .sq{box-shadow:var(--sh-s) var(--sh-s) 0 #555}
 #o-artist{background:var(--y);padding:calc(var(--s4) + var(--top)) var(--s5) calc(var(--s5) + var(--bot));gap:var(--s4);overflow-y:auto;overscroll-behavior:contain}
 #o-artist>*{flex-shrink:0}
-.sig{align-self:flex-start;max-width:calc(100% - 12px);font-family:'Archivo Black';font-size:min(16vw,72px);line-height:1;background:var(--k);color:var(--y);padding:var(--s2) var(--s4);transform:rotate(-3deg);margin:var(--s4) 0 var(--s2)}
+.sigs{display:flex;align-items:center;gap:var(--s3);margin:var(--s3) 0 var(--s1);flex-wrap:wrap}
+.sigs .x{font-family:'Archivo Black';font-size:var(--t-2xl)}
+.sigs .sig{margin:0}
+.sigs .sig:last-child{transform:rotate(3deg);background:var(--p);color:var(--onp)}
+#aTitle{font-size:var(--t-2xl)}
+.people{display:flex;flex-direction:column;gap:var(--s4)}
+.person{padding:var(--s4);display:flex;flex-direction:column;gap:var(--s2)}
+.person .h{font-size:var(--t-xl)}
+.person .txt{white-space:pre-line}
+.person .big{height:48px;font-size:var(--t-s);align-self:flex-start;width:auto;text-decoration:none;box-shadow:var(--sh-s) var(--sh-s) 0 var(--k)}
+.sig{align-self:flex-start;max-width:calc(100% - 12px);font-family:'Archivo Black';;font-size:min(13vw,56px);line-height:1;background:var(--k);color:var(--y);padding:var(--s2) var(--s4);transform:rotate(-3deg);margin:var(--s4) 0 var(--s2)}
 #aName{font-size:var(--t-2xl)}
 .astrip{display:flex;gap:var(--s2);flex-wrap:wrap}
 .astrip img{width:56px;height:56px;border:var(--bw) solid var(--k);display:block}
@@ -355,8 +365,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=205"></script>
-<script src="content.js?v=205"></script>
+<script src="i18n.js?v=206"></script>
+<script src="content.js?v=206"></script>
 </head>
 <body>
 <div id="app">
@@ -501,14 +511,13 @@ body.calm .fx,body.calm .flash{display:none}
   <div class="dnav"><button class="sq" id="dPrev" data-ta="prevImage"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3.5"><path d="M15 5l-7 7 7 7"/></svg></button><button class="sq" id="dNext" data-ta="nextImageAria"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3.5"><path d="M9 5l7 7-7 7"/></svg></button></div>
 </div>
 
-<!-- KÜNSTLERIN -->
+<!-- PROJEKT -->
 <div class="ov" id="o-artist" role="dialog" data-ta="aboutArtist">
   <div class="top"><span class="pill" data-t="aboutArtist"></span><button class="sq" id="aClose" data-ta="close"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-  <div class="sig" id="aSig" aria-hidden="true" data-fit></div>
-  <span class="lbl" id="aRole"></span>
-  <h2 class="h" id="aName" data-fit></h2>
-  <p class="txt" id="aBio" style="white-space:pre-line"></p>
-  <a class="big w alink" id="aLink" target="_blank" rel="noopener" hidden style="width:auto;text-decoration:none"><span id="aLinkLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+  <div class="sigs" id="aSigs" aria-hidden="true"></div>
+  <h2 class="h" id="aTitle" data-fit></h2>
+  <p class="txt" id="aText" style="white-space:pre-line"></p>
+  <div class="people" id="aPeople"></div>
   <div class="astrip" id="aStrip" aria-hidden="true"></div>
 </div>
 
@@ -565,14 +574,14 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Grunddaten ===== */
-const VERSION='2.0.5';
+const VERSION='2.0.6';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
 const ACC={4:'#2D7BFF',5:'#FF6A00',6:'#8A3FFC',7:'#00A88F',8:'#E8212E',9:'#2D7BFF'};
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
 const DEV=/[?&]dev\b/.test(location.search);
-const C=window.CONTENT||{artist:{},images:[]};
+const C=window.CONTENT||{people:[],images:[]};
 IMGS.forEach(s=>{const im=new Image();im.src=s});
 
 /* ===== Spielstand ===== */
@@ -613,8 +622,8 @@ function applyLang(){
   document.documentElement.style.setProperty('--pairtxt','"'+t('pair')+'"');
   $$('[data-lang]').forEach(b=>b.setAttribute('aria-checked',b.dataset.lang===L));
   $('#ver').textContent='Memo Punch · '+t('version',{v:VERSION});
-  const nm=(C.artist||{}).name||'';$('#footArtist').textContent=loc((C.artist||{}).role)+': '+nm;
-  $('#artistShort').textContent=nm;
+  $('#footArtist').textContent=credits();
+  $('#artistShort').textContent=PEOPLE().map(p=>p.name).join(' × ');
 }
 
 /* ===== Klang: Papier, Pinsel, Stempel (alles live erzeugt) ===== */
@@ -728,15 +737,19 @@ function openDetail(i){
 $('#dClose').addEventListener('click',()=>{SFX.tap();closeOv('o-detail')});
 $('#dPrev').addEventListener('click',()=>{SFX.flip();openDetail((detailIdx-1+S.unlocked)%S.unlocked)});
 $('#dNext').addEventListener('click',()=>{SFX.flip();openDetail((detailIdx+1)%S.unlocked)});
+const PEOPLE=()=>(C.people&&C.people.length)?C.people:(C.artist?[C.artist]:[]);
+function credits(){return PEOPLE().map(p=>loc(p.role)+': '+(p.name||'')).join(' · ')}
 function openArtist(){
-  const A=C.artist||{};
-  $('#aSig').textContent=A.signature||'';$('#aSig').hidden=!A.signature;
-  $('#aRole').textContent=loc(A.role);
-  $('#aName').textContent=A.name||'';$('#aName').classList.toggle('ph',isPh(A.name));
-  const bio=loc(A.bio);$('#aBio').textContent=bio;$('#aBio').classList.toggle('ph',isPh(bio));
-  const ln=$('#aLink');if(A.link){ln.hidden=false;ln.href=A.link;$('#aLinkLbl').textContent=A.link.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'')}else ln.hidden=true;
+  const P=PEOPLE(),pr=C.project||{};
+  $('#aSigs').innerHTML=P.filter(p=>p.signature).map(p=>'<span class="sig">'+esc(p.signature)+'</span>').join('<span class="x">×</span>');
+  $('#aTitle').textContent=loc(pr.title)||t('aboutArtist');
+  const tx=loc(pr.text);$('#aText').textContent=tx;$('#aText').hidden=!tx;$('#aText').classList.toggle('ph',isPh(tx));
+  $('#aPeople').innerHTML=P.map(p=>{const bio=loc(p.bio),ln=p.link||'';
+    return '<div class="box person"><span class="lbl">'+esc(loc(p.role))+'</span><h3 class="h'+(isPh(p.name)?' ph':'')+'">'+esc(p.name||'')+'</h3>'+
+      (bio?'<p class="txt'+(isPh(bio)?' ph':'')+'">'+esc(bio)+'</p>':'')+
+      (ln?'<a class="big w" href="'+esc(ln)+'" target="_blank" rel="noopener"><span>'+esc(ln.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M7 17 17 7M9 7h8v8"/></svg></a>':'')+'</div>'}).join('');
   $('#aStrip').innerHTML=IMGS.slice(0,S.unlocked).map(s=>'<img src="'+s+'" alt="">').join('');
-  openOv('o-artist');
+  $('#o-artist').scrollTop=0;openOv('o-artist');
 }
 $('#openArtist').addEventListener('click',()=>{SFX.tap();openArtist()});
 $('#aClose').addEventListener('click',()=>{SFX.tap();closeOv('o-artist')});

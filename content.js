@@ -1,7 +1,7 @@
 /*
   MEMO PUNCH · INHALTE
   ====================
-  Hier stehen alle Texte über dich und deine Bilder. Nur die Texte zwischen den
+  Hier stehen alle Texte über das Projekt, die beiden Menschen dahinter und die Bilder. Nur die Texte zwischen den
   Anführungszeichen ändern. Jedes Bild hat einen Titel und eine Geschichte,
   jeweils auf Deutsch (de) und Englisch (en).
 
@@ -13,21 +13,38 @@
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
 window.CONTENT = {
-  artist: {
-    name: "[Name der Künstlerin]",
-    // Kurzes Kürzel oder Signatur, erscheint auf der Über-Seite groß
-    signature: "[Kürzel]",
-    role: {
-      de: "Zeichnungen",
-      en: "Drawings"
-    },
-    bio: {
-      de: "[Hier steht dein Text über dich: wer du bist, wie die Tusche-Kacheln entstehen, was dich an Mustern reizt.]",
-      en: "[Your text about yourself: who you are, how the ink tiles come to life, what draws you to patterns.]"
-    },
-    // Optional: Link zu deiner Website oder deinem Instagram, sonst leer lassen
-    link: ""
+  // Über das Projekt: kurzer Text zur Zusammenarbeit
+  project: {
+    title: { de: "Über das Projekt", en: "About the project" },
+    text: {
+      de: "[Wie Memo Punch entstanden ist: eine Zusammenarbeit aus Zeichnung und Gestaltung. Hier steht euer gemeinsamer Text.]",
+      en: "[How Memo Punch came about: a collaboration between drawing and design. Your shared text goes here.]"
+    }
   },
+
+  // Die Menschen dahinter. Namen sind Platzhalter (Fantasienamen), bitte ersetzen.
+  people: [
+    {
+      name: "Ella Strich",
+      signature: "ES",
+      role: { de: "Zeichnungen", en: "Drawings" },
+      bio: {
+        de: "[Text über die Zeichnerin: wer sie ist, wie die Tusche-Kacheln entstehen, was sie an Mustern reizt.]",
+        en: "[About the illustrator: who she is, how the ink tiles come to life, what draws her to patterns.]"
+      },
+      link: ""
+    },
+    {
+      name: "Max Raster",
+      signature: "MR",
+      role: { de: "Webdesign & Entwicklung", en: "Web design & development" },
+      bio: {
+        de: "[Text über dich: Gestaltung, Spielidee, Umsetzung als App.]",
+        en: "[About you: design, game concept, building the app.]"
+      },
+      link: ""
+    }
+  ],
 
   // ENTWURF von Claude: Titel und Texte beschreiben nur, was auf den Bildern zu sehen ist.
   // Ersetze sie durch deine eigenen Geschichten.
