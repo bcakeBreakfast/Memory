@@ -1,6 +1,13 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
 window.STR = {
 de: {
+  diag: "Ton & Vibration testen", diagSub: "Finde heraus, was auf deinem Gerät geht",
+  loudAlways: "Ton auch bei Lautlos", loudAlwaysSub: "Spielt trotz Lautlos-Schalter, pausiert aber deine Musik",
+  dTitle: "Test", dInfo: "Gerät", dSound: "Ton", dHaptic: "Vibration",
+  dS1: "A · Normal", dS2: "B · Auch bei Lautlos", dS3: "C · Audio-Datei",
+  dH1: "A · Automatisch", dH2: "B · Hier tippen", dH3: "C · Schalter umlegen",
+  dHint: "Tippe jede Variante an und merk dir, welche du hörst bzw. spürst. Schick mir die Buchstaben, dann baue ich genau die ein.",
+  dIos265: "Hinweis: Ab iOS 26.5 hat Apple automatische Vibration für Web-Apps abgeschaltet. Variante C könnte trotzdem gehen.",
   appTitle: "Memo Punch",
   round: "Runde", master: "Meister {n}/{of}",
   titleA: "Memo", titleB: "Punch!",
@@ -65,6 +72,13 @@ de: {
   progressN: "{i} / {n}"
 },
 en: {
+  diag: "Test sound & haptics", diagSub: "Find out what works on your device",
+  loudAlways: "Sound in silent mode", loudAlwaysSub: "Plays despite the silent switch, but pauses your music",
+  dTitle: "Test", dInfo: "Device", dSound: "Sound", dHaptic: "Haptics",
+  dS1: "A · Normal", dS2: "B · Also in silent mode", dS3: "C · Audio file",
+  dH1: "A · Automatic", dH2: "B · Tap here", dH3: "C · Flip the switch",
+  dHint: "Tap each option and note which ones you hear or feel. Send me the letters and I'll use exactly those.",
+  dIos265: "Note: from iOS 26.5, Apple switched off automatic haptics for web apps. Option C may still work.",
   appTitle: "Memo Punch",
   round: "Round", master: "Master {n}/{of}",
   titleA: "Memo", titleB: "Punch!",

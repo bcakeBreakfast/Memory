@@ -323,6 +323,12 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .mres span{font-weight:700;font-size:var(--t-m)}
 .mres .rec{background:var(--p);color:var(--onp);padding:var(--s1) var(--s3);font-family:'Archivo Black';text-transform:uppercase;transform:rotate(-4deg)}
 
+.dgrid{display:grid;gap:var(--s3)}
+.dgrid .big{height:56px;font-size:var(--t-m)}
+#o-diag{background:var(--y);padding:calc(var(--s4) + var(--top)) var(--s5) calc(var(--s5) + var(--bot));gap:var(--s3);overflow-y:auto;overscroll-behavior:contain}
+#o-diag>*{flex-shrink:0}
+.hapbox{cursor:pointer;position:relative}
+.hapin{position:absolute;inset:0;width:100%;height:100%;opacity:.01;margin:0;cursor:pointer}
 body.calm *{animation-duration:.01s!important;transition-duration:.01s!important}
 body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
@@ -387,12 +393,14 @@ body.calm .fx,body.calm .flash{display:none}
   </div>
   <div class="box list">
     <button class="row" role="switch" data-set="sound" aria-checked="true"><span><span data-t="sound"></span><small data-t="soundSub"></small></span><span class="tg" aria-hidden="true"></span></button>
+    <button class="row" role="switch" data-set="loud" aria-checked="false"><span><span data-t="loudAlways"></span><small data-t="loudAlwaysSub"></small></span><span class="tg" aria-hidden="true"></span></button>
     <button class="row" role="switch" data-set="haptic" aria-checked="true"><span><span data-t="haptic"></span><small data-t="hapticSub"></small></span><span class="tg" aria-hidden="true"></span></button>
     <button class="row" role="switch" data-set="calm" aria-checked="false"><span><span data-t="calm"></span><small data-t="calmSub"></small></span><span class="tg" aria-hidden="true"></span></button>
     <button class="row" role="switch" data-set="big" aria-checked="false"><span><span data-t="bigText"></span><small data-t="bigTextSub"></small></span><span class="tg" aria-hidden="true"></span></button>
   </div>
   <div class="box list">
     <button class="row" id="sInstall" hidden><span><span data-t="install"></span><small id="sInstallSub"></small></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+    <button class="row" id="sDiag"><span><span data-t="diag"></span><small data-t="diagSub"></small></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <button class="row" id="sIntro"><span data-t="intro"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <button class="row" id="sDev" hidden><span><span data-t="devUnlock"></span><small data-t="devUnlockSub"></small></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
     <button class="row" id="sReset"><span data-t="reset"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
@@ -506,6 +514,22 @@ body.calm .fx,body.calm .flash{display:none}
   <button class="big" id="iNext"><span id="iLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
 </div>
 
+<div class="ov" id="o-diag" role="dialog" data-ta="diag">
+  <div class="top"><span class="pill" data-t="diag"></span><button class="sq" id="dgClose" data-ta="close"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <p class="txt" data-t="dHint"></p>
+  <span class="lbl" data-t="dInfo"></span>
+  <div class="box rows" id="dgInfo"></div>
+  <p class="txt" id="dg265" data-t="dIos265" hidden style="font-weight:700"></p>
+  <span class="lbl" data-t="dSound"></span>
+  <div class="dgrid"><button class="big w" id="dgS1"><span data-t="dS1"></span></button><button class="big w" id="dgS2"><span data-t="dS2"></span></button><button class="big w" id="dgS3"><span data-t="dS3"></span></button></div>
+  <span class="lbl" data-t="dHaptic"></span>
+  <div class="dgrid">
+    <button class="big w" id="dgH1"><span data-t="dH1"></span></button>
+    <label class="big w hapbox" id="dgH2"><input type="checkbox" switch class="hapin"><span data-t="dH2"></span></label>
+    <label class="big w hapbox"><span data-t="dH3"></span><input type="checkbox" switch id="dgH3" style="width:52px;height:32px;flex:none"></label>
+  </div>
+</div>
+
 <div class="box toast" id="toast" role="status"><span id="toastTxt"></span><button id="toastBtn"></button></div>
 
 <div class="ov dim" id="o-ios" role="dialog">
@@ -521,7 +545,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Grunddaten ===== */
-const VERSION='2.0.0';
+const VERSION='2.0.1';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -537,7 +561,7 @@ const defLang=(navigator.language||'de').toLowerCase().startsWith('de')?'de':'en
 const FRESH=()=>({round:1,unlocked:2,prog:0,master:0,
   stats:{won:0,lost:0,pairs:0,moves:0,streak:0,bestStreak:0,time:0},
   best:{},found:Array(10).fill(0),at:[1,1,0,0,0,0,0,0,0,0],mini:{idx:0,seq:0,nback:0,stream:0},
-  set:{sound:true,haptic:true,calm:false,big:false,theme:'punch',lang:defLang},intro:false});
+  set:{sound:true,loud:false,haptic:true,calm:false,big:false,theme:'punch',lang:defLang},intro:false});
 let S=FRESH();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.round){const f=FRESH();S={...f,...s,stats:{...f.stats,...s.stats},set:{...f.set,...s.set},mini:{...f.mini,...(s.mini||{})}};while(S.found.length<10)S.found.push(0);while(S.at.length<10)S.at.push(0)}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
@@ -577,9 +601,10 @@ function applyLang(){
 let AC=null,NOISE=null;
 function ctx(){AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();
   if(!NOISE){const n=AC.sampleRate;NOISE=AC.createBuffer(1,n,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1}return AC}
-function audioUnlock(){try{if(navigator.audioSession&&navigator.audioSession.type!=='ambient')navigator.audioSession.type='ambient';
+function setSession(){try{if(navigator.audioSession){const want=S.set.loud?'playback':'ambient';if(navigator.audioSession.type!==want)navigator.audioSession.type=want}}catch(e){}}
+function audioUnlock(){try{setSession();
   const a=ctx();if(!audioUnlock.done){const b=a.createBuffer(1,1,22050),src=a.createBufferSource();src.buffer=b;src.connect(a.destination);src.start(0);audioUnlock.done=true}}catch(e){}}
-['pointerdown','touchend','click'].forEach(ev=>document.addEventListener(ev,audioUnlock,{capture:true,passive:true}));
+['touchend','click'].forEach(ev=>document.addEventListener(ev,audioUnlock,{capture:true,passive:true}));
 function noise(at,dur,o){if(!S.set.sound)return;try{o=o||{};const a=ctx(),tt=a.currentTime+(at||0),src=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();
   src.buffer=NOISE;fl.type=o.type||'bandpass';fl.frequency.setValueAtTime(o.f||2000,tt);if(o.f2)fl.frequency.exponentialRampToValueAtTime(o.f2,tt+dur);fl.Q.value=o.q||1;
   g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(o.vol||.2,tt+(o.attack||.004));g.gain.exponentialRampToValueAtTime(.0001,tt+dur);
@@ -972,6 +997,25 @@ function runStream(){
   }
   mLater(()=>{$('#mBtnLbl').textContent=t('now');$('#mBtn').onclick=tap;$('#mStage').onclick=tap;stat();next()},2200);
 }
+
+/* ===== Test: Ton & Vibration ===== */
+function iosVer(){const m=navigator.userAgent.match(/OS (\d+)_(\d+)/);return m?[+m[1],+m[2]]:null}
+let wavURL=null;
+function beepWav(){if(wavURL)return wavURL;const sr=22050,n=Math.floor(sr*.18),b=new ArrayBuffer(44+n*2),v=new DataView(b);
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){const e=Math.exp(-i/(sr*.05));v.setInt16(44+i*2,Math.sin(2*Math.PI*880*i/sr)*e*12000,true)}
+  wavURL=URL.createObjectURL(new Blob([b],{type:'audio/wav'}));return wavURL}
+function diagInfo(){const iv=iosVer();
+  const rows=[['iOS',iv?iv.join('.'):'–'],['App',standalone?'installiert / installed':'Browser'],['Audio',AC?AC.state:'–'],['Session',navigator.audioSession?navigator.audioSession.type:'–'],['vibrate()',canVibrate?'ja / yes':'nein / no']];
+  $('#dgInfo').innerHTML=rows.map(r=>'<div><span>'+r[0]+'</span><em>'+esc(r[1])+'</em></div>').join('');
+  $('#dg265').hidden=!(iv&&(iv[0]>26||(iv[0]===26&&iv[1]>=5)))}
+$('#sDiag').addEventListener('click',()=>{SFX.tap();diagInfo();openOv('o-diag')});
+$('#dgClose').addEventListener('click',()=>{SFX.tap();closeOv('o-diag')});
+$('#dgS1').addEventListener('click',()=>{const was=S.set.loud,ws=S.set.sound;S.set.loud=false;S.set.sound=true;setSession();SFX.match();S.set.loud=was;S.set.sound=ws;setTimeout(diagInfo,300)});
+$('#dgS2').addEventListener('click',()=>{const ws=S.set.sound;S.set.sound=true;try{navigator.audioSession&&(navigator.audioSession.type='playback')}catch(e){}SFX.match();S.set.sound=ws;setTimeout(()=>{setSession();diagInfo()},900)});
+$('#dgS3').addEventListener('click',()=>{try{const a=new Audio(beepWav());a.play().catch(()=>{})}catch(e){}setTimeout(diagInfo,300)});
+$('#dgH1').addEventListener('click',()=>{hapticTick()});
 
 /* ===== Steuerung ===== */
 function toMenu(){stopAll();['o-win','o-lose','o-pause'].forEach(closeOv);goTab('home')}
