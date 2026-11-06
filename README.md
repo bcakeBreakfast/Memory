@@ -16,8 +16,22 @@ Memory mit eigenen Tuschezeichnungen, als installierbare Web-App (PWA).
 
 Läuft danach im Vollbild und offline. Spielstand bleibt auf dem Gerät.
 
+## Deine Texte eintragen
+Alle Texte über die Künstlerin und die Geschichten zu den Bildern stehen in **`content.js`**.
+1. Auf GitHub die Datei `content.js` öffnen und auf den Stift (Edit) klicken.
+2. Nur die Texte zwischen den Anführungszeichen ändern, jeweils `de` (Deutsch) und `en` (Englisch).
+3. Unten auf **Commit changes** klicken. Nach 1–2 Minuten ist es online, die App zeigt „Neue Version da!“.
+
+Texte in [eckigen Klammern] sind Platzhalter und erscheinen in der App gestrichelt umrandet, bis sie ersetzt sind.
+Wichtig: Nach einer Änderung in `content.js` in `sw.js` die Zahl in `CACHE` um eins erhöhen (z. B. `2.0.0` → `2.0.1`), damit installierte Apps die neuen Texte laden.
+
+## Testmodus
+Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischalten“. Ohne `?dev` ist der Eintrag unsichtbar.
+
 ## Dateien
-- `index.html`: die ganze App
+- `index.html`: die ganze App (Designsystem-Tokens oben im CSS)
+- `content.js`: Künstlerin, Bildtitel und Geschichten (DE/EN)
+- `i18n.js`: alle Oberflächentexte Deutsch/Englisch
 - `sw.js`: Offline-Cache. Bei jeder neuen Version die Zahl in `CACHE` und `VERSION` (in index.html) erhöhen.
 - `manifest.webmanifest`, `icons/`: Name, Farben, App-Icons
 - `img/`: t1–t6 nachgezeichnete Tuschekacheln, t7–t10 neu gezeichnet im selben Stil (SVG)
