@@ -176,7 +176,19 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 #wTease::after{font-size:min(20vw,90px);text-shadow:5px 5px 0 var(--p)}
 .wtext{font-family:'Archivo Black';font-size:var(--t-l);line-height:1.25;color:var(--y);text-transform:uppercase;text-align:center;margin:0}
 .wsub{font-size:var(--t-m);line-height:1.45;color:var(--w);text-align:center;margin:0;font-weight:500}
-.wcap{margin-top:var(--s2);font-weight:700;font-size:var(--t-m);color:var(--w);text-align:center;margin:0;position:relative}
+.wstory{position:relative;z-index:4;width:100%;display:flex;flex-direction:column;gap:var(--s2);text-align:left;background:var(--k);border:var(--bw) solid var(--y);box-shadow:var(--sh) var(--sh) 0 var(--acc);padding:var(--s3) var(--s4);margin-top:var(--s2);opacity:0;transform:translateY(16px);animation:storyIn .5s var(--ease-pop) forwards 1.35s}
+.wstory .h{font-size:var(--t-xl);color:var(--y);line-height:1}
+.wstory .txt{color:var(--w);white-space:pre-line;font-size:var(--t-m);line-height:1.45}
+@keyframes storyIn{to{opacity:1;transform:none}}
+#o-win.has-story .reveal{overflow:hidden}
+#o-win.has-story #wNew{justify-content:flex-start;padding:var(--s4) var(--s2) var(--s4) 0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:none;-webkit-mask-image:linear-gradient(#000 calc(100% - 24px),transparent)}
+#o-win.has-story #wNew::-webkit-scrollbar{display:none}
+#o-win.has-story #wNew>*{flex-shrink:0}
+#o-win.has-story #wImg{width:min(40vw,19svh,180px)}
+#o-win.has-story .h2{font-size:min(12vw,56px)}
+#o-win.has-story{gap:var(--s3)}
+#o-win.has-story .burst{width:min(64vw,32svh,300px);top:0}
+#o-win.fin .wstory{background:var(--w);border-color:var(--k);box-shadow:var(--sh) var(--sh) 0 var(--k)}#o-win.fin .wstory .h{color:var(--k)}#o-win.fin .wstory .txt{color:var(--k)}
 .dark .pips i{border-color:var(--y);background:transparent}
 .dark .pips i.on{background:var(--p)}
 .t-tusche .dark .pips i.on{background:var(--y)}
@@ -210,7 +222,7 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 #o-win.fin .tag{background:var(--k);color:var(--y)}
 #o-win.fin #wImg{border-color:var(--k);box-shadow:10px 10px 0 var(--k)}
 #o-win.fin .wstats>span{border-color:var(--k)}
-#o-win.fin .wcap{color:var(--k)}
+
 #o-win.fin #wNext{background:var(--k);color:var(--y);border-color:var(--k)}
 #o-win.fin .ghost{color:var(--k)}
 
@@ -453,7 +465,7 @@ body.calm .fx,body.calm .flash{display:none}
   <h2 class="h h2" data-fit id="wTitle"></h2>
   <div class="wstats"><span id="wMoves"></span><span id="wTime">0:00</span><span class="rec" id="wRec" data-t="record" hidden></span></div>
   <div class="reveal">
-    <div class="reveal" id="wNew"><div class="burst" aria-hidden="true"></div><span class="tag" id="wTag"></span><img id="wImg" alt=""><p class="wcap" id="wCap"></p></div>
+    <div class="reveal" id="wNew"><div class="burst" aria-hidden="true"></div><span class="tag" id="wTag"></span><img id="wImg" alt=""><div class="wstory" id="wStoryBox"><h3 class="h" id="wCap" data-fit></h3><p class="txt" id="wStory"></p></div></div>
     <div class="reveal" id="wProg"><p class="wtext" id="wLeft"></p><div class="tease" id="wTease" aria-hidden="true"><img alt=""></div><span class="pips" id="wPips" aria-hidden="true"></span></div>
     <div class="reveal" id="wMaster"><p class="wtext" id="wmTitle"></p><p class="wsub" id="wmInfo"></p></div>
   </div>
@@ -545,7 +557,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Grunddaten ===== */
-const VERSION='2.0.1';
+const VERSION='2.0.2';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -862,7 +874,10 @@ function win(){
   const ov=$('#o-win');ov.classList.remove('v0','v1','v2','v3','fin');ov.style.removeProperty('--acc');
   if(got){if(S.unlocked===ALL)ov.classList.add('fin');else{ov.classList.add('v'+((S.unlocked-3)%4));const a=ACC[S.unlocked];if(a&&S.set.theme!=='tusche')ov.style.setProperty('--acc',a)}}
   if(got){const n=S.unlocked-1;$('#wImg').src=IMGS[n];$('#wImg').alt=imgTitle(n);$('#wTag').textContent=S.unlocked===ALL?t('lastImage'):t('newImage');
-    $('#wCap').textContent=imgTitle(n);$('#wCap').classList.toggle('ph',isPh(imgTitle(n)))}
+    $('#wCap').textContent=imgTitle(n);$('#wCap').classList.toggle('ph',isPh(imgTitle(n)));
+    const sto=imgStory(n);$('#wStory').textContent=sto;$('#wStory').hidden=!sto;$('#wStory').classList.toggle('ph',isPh(sto));$('#wNew').scrollTop=0;
+    const box=$('#wStoryBox');box.style.animation='none';box.offsetWidth;box.style.animation=''}
+  ov.classList.toggle('has-story',got);
   if(working){const r=need()-S.prog;$('#wLeft').textContent=r===1?t('untilImage1',{n:S.unlocked+1}):t('untilImageN',{r,n:S.unlocked+1});$('#wPips').innerHTML=pips(S.prog,need());$('#wTease img').src=IMGS[S.unlocked]}
   if(!got&&!working){const n=stage(),fresh=S.master%2===0&&S.master/2<STAGE_RULES.length;
     $('#wmTitle').textContent=fresh?t('newStage',{name:n.name}):t('stageN',{n:stageNo(),name:n.name});$('#wmInfo').textContent=n.info}
