@@ -23,7 +23,7 @@ Alle Texte über die Künstlerin und die Geschichten zu den Bildern stehen in **
 3. Unten auf **Commit changes** klicken. Nach 1–2 Minuten ist es online, die App zeigt „Neue Version da!“.
 
 Texte in [eckigen Klammern] sind Platzhalter und erscheinen in der App gestrichelt umrandet, bis sie ersetzt sind.
-Wichtig: Nach einer Änderung in `content.js` in `sw.js` die Zahl in `CACHE` um eins erhöhen (z. B. `2.0.0` → `2.0.1`), damit installierte Apps die neuen Texte laden.
+Wichtig: Nach einer Änderung in `content.js` ist nichts weiter nötig: Die App holt neue Texte automatisch beim nächsten Öffnen.
 
 ## Testmodus
 Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischalten“. Ohne `?dev` ist der Eintrag unsichtbar.

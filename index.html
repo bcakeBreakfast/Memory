@@ -355,8 +355,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js"></script>
-<script src="content.js"></script>
+<script src="i18n.js?v=205"></script>
+<script src="content.js?v=205"></script>
 </head>
 <body>
 <div id="app">
@@ -565,7 +565,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Grunddaten ===== */
-const VERSION='2.0.4';
+const VERSION='2.0.5';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -1041,7 +1041,7 @@ $('#dgS3').addEventListener('click',()=>{try{const a=new Audio(beepWav());a.play
 $('#dgH1').addEventListener('click',()=>{hapticTick()});
 
 /* ===== Steuerung ===== */
-function toMenu(){stopAll();['o-win','o-lose','o-pause'].forEach(closeOv);goTab('home')}
+function toMenu(){if(window.pendingReload)return window.pendingReload();stopAll();['o-win','o-lose','o-pause'].forEach(closeOv);goTab('home')}
 $('#play').addEventListener('click',()=>{SFX.tap();startRound()});
 $('#pauseBtn').addEventListener('click',()=>{if(peeking)return;SFX.tap();if(running){acc+=Date.now()-t0;clock(false)}openOv('o-pause')});
 $('#pResume').addEventListener('click',()=>{SFX.tap();closeOv('o-pause');if(matched<pairs)clock(true)});
@@ -1073,7 +1073,9 @@ let deferredPrompt=null;
 function showToast(txt,btn,fn){$('#toastTxt').textContent=txt;$('#toastBtn').textContent=btn;$('#toastBtn').onclick=fn;$('#toast').classList.add('on')}
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
   let reloading=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});
+  const busy=()=>$('#v-game').classList.contains('on')||$('#v-mini').classList.contains('on');
+  const doReload=()=>{if(reloading)return;reloading=true;location.reload()};
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!busy())doReload();else window.pendingReload=doReload});
   navigator.serviceWorker.register('sw.js').then(reg=>{
     const ask=w=>showToast(t('newVersion'),t('reload'),()=>{$('#toast').classList.remove('on');w.postMessage('skipWaiting')});
     if(reg.waiting&&navigator.serviceWorker.controller)ask(reg.waiting);
