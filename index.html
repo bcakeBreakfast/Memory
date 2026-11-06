@@ -341,6 +341,15 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 #o-diag>*{flex-shrink:0}
 .hapbox{cursor:pointer;position:relative}
 .hapin{position:absolute;inset:0;width:100%;height:100%;opacity:.01;margin:0;cursor:pointer}
+.pill.out{background:transparent;color:var(--k);border:var(--bw) solid var(--k);min-height:44px;cursor:pointer}
+.playrow .big{flex:1;width:auto;min-width:0}
+.modal .playrow .big{height:64px}
+.modal .minibtn{width:64px;height:64px}
+.minibtn.inv{background:var(--k);color:var(--y);border-color:var(--y);box-shadow:var(--sh) var(--sh) 0 var(--y)}
+.minibtn.inv:active{box-shadow:2px 2px 0 var(--y)}
+#o-win.fin .minibtn.inv{background:var(--w);color:var(--k);border-color:var(--k);box-shadow:var(--sh) var(--sh) 0 var(--k)}
+#o-win.v1 .burst{-webkit-mask-image:radial-gradient(closest-side,#000 45%,transparent 100%);mask-image:radial-gradient(closest-side,#000 45%,transparent 100%)}
+#o-win.v3 .burst{-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);mask-image:radial-gradient(closest-side,#000 70%,transparent 100%)}
 body.calm *{animation-duration:.01s!important;transition-duration:.01s!important}
 body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
@@ -439,8 +448,10 @@ body.calm .fx,body.calm .flash{display:none}
   <p class="txt" id="mInfo"></p>
   <div class="mstat" id="mStat" aria-live="polite"></div>
   <div class="mstage" id="mStage"></div>
+  <div class="playrow">
   <button class="big" id="mBtn"><span id="mBtnLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-  <button class="ghost" id="mSkip"></button>
+  <button class="minibtn" id="mSkip"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l8 7-8 7zM17 5v14"/></svg><span id="mSkipLbl"></span></button>
+  </div>
 </section>
 
 <nav class="tabbar" id="tabbar" aria-label="Menu">
@@ -454,9 +465,8 @@ body.calm .fx,body.calm .flash{display:none}
 <div class="ov dim" id="o-pause" role="dialog" data-ta="pause">
   <div class="box modal">
     <h2 class="h" data-fit data-t="pause"></h2>
-    <button class="big" id="pResume"><span data-t="resume"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M7 4l12 8-12 8z"/></svg></button>
+    <div class="playrow"><button class="big" id="pResume"><span data-t="resume"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M7 4l12 8-12 8z"/></svg></button><button class="minibtn" id="pQuit" data-ta="toMenu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7M6 9v11h12V9"/><path d="M10 20v-6h4v6"/></svg><span data-t="toMenuS"></span></button></div>
     <button class="big w" id="pRestart"><span data-t="reshuffle"></span></button>
-    <button class="ghost" id="pQuit" data-t="toMenu"></button>
   </div>
 </div>
 
@@ -469,8 +479,7 @@ body.calm .fx,body.calm .flash{display:none}
     <div class="reveal" id="wProg"><p class="wtext" id="wLeft"></p><div class="tease" id="wTease" aria-hidden="true"><img alt=""></div><span class="pips" id="wPips" aria-hidden="true"></span></div>
     <div class="reveal" id="wMaster"><p class="wtext" id="wmTitle"></p><p class="wsub" id="wmInfo"></p></div>
   </div>
-  <button class="big y" id="wNext"><span id="wNextLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-  <button class="ghost" id="wHome" data-t="toMenu"></button>
+  <div class="playrow"><button class="big y" id="wNext"><span id="wNextLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button><button class="minibtn inv" id="wHome" data-ta="toMenu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7M6 9v11h12V9"/><path d="M10 20v-6h4v6"/></svg><span data-t="toMenuS"></span></button></div>
 </div>
 
 <!-- VERLOREN -->
@@ -478,8 +487,7 @@ body.calm .fx,body.calm .flash{display:none}
   <div class="box modal" style="background:var(--p);color:var(--onp)">
     <h2 class="h" data-fit data-t="loseTitle" style="line-height:.9"></h2>
     <p class="txt" data-t="loseText"></p>
-    <button class="big y" id="lRetry"><span data-t="retry"></span></button>
-    <button class="ghost" id="lQuit" data-t="toMenu" style="color:var(--onp)"></button>
+    <div class="playrow"><button class="big y" id="lRetry"><span data-t="retry"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v5h5"/></svg></button><button class="minibtn" id="lQuit" data-ta="toMenu"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7M6 9v11h12V9"/><path d="M10 20v-6h4v6"/></svg><span data-t="toMenuS"></span></button></div>
   </div>
 </div>
 
@@ -516,7 +524,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <!-- EINFÜHRUNG -->
 <div class="ov" id="o-intro" role="dialog" data-ta="howTo">
-  <div class="top"><span class="pill" data-t="howTo"></span><button class="ghost" id="iSkip" data-t="skip"></button></div>
+  <div class="top"><span class="pill" data-t="howTo"></span><button class="pill out" id="iSkip" data-t="skip"></button></div>
   <div class="slides">
     <div class="slide on"><div class="art" id="art1" aria-hidden="true"></div><h2 class="h" data-fit data-t="i1t"></h2><p class="txt" data-t="i1p"></p></div>
     <div class="slide"><div class="art" id="art2" aria-hidden="true"></div><h2 class="h" data-fit data-t="i2t"></h2><p class="txt" data-t="i2p"></p></div>
@@ -557,7 +565,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Grunddaten ===== */
-const VERSION='2.0.2';
+const VERSION='2.0.3';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -921,7 +929,7 @@ function openMini(i,then){
   $('#mStat').innerHTML=S.mini[mg.key]?'<span>'+t('best',{v:fmtScore(mg.key,S.mini[mg.key])})+'</span>':'';
   $('#mStage').innerHTML='';$('#mStage').onclick=null;
   $('#mBtnLbl').textContent=t('start');$('#mBtn').hidden=false;$('#mBtn').onclick=()=>{SFX.tap();[runSeq,runNback,runStream][i]()};
-  $('#mSkip').hidden=false;$('#mSkip').textContent=then?t('skip'):t('back');
+  $('#mSkip').hidden=false;$('#mSkipLbl').textContent=then?t('skipS'):t('backS');$('#mSkip').setAttribute('aria-label',then?t('skip'):t('back'));
   showView('v-mini');
 }
 function endMini(score,detail){
@@ -1053,7 +1061,7 @@ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.sta
 if(standalone)document.documentElement.classList.add('standalone');
 function bgSync(){const ov=[...$$('.ov.on')].filter(o=>!o.classList.contains('dim')).pop();
   let c=ov?getComputedStyle(ov).backgroundColor:'';if(!c||c==='rgba(0, 0, 0, 0)')c=getComputedStyle(document.body).backgroundColor;
-  document.documentElement.style.background=c;const m=$('meta[name=theme-color]');m&&m.setAttribute('content',c)}
+  document.documentElement.style.background=c;document.body.style.background=ov?c:'';const m=$('meta[name=theme-color]');m&&m.setAttribute('content',c)}
 function sizeApp(){if(!standalone)return;const a=$('#app'),r=document.documentElement;
   a.style.height=innerHeight+'px';a.style.bottom='auto';
   const port=innerHeight>=innerWidth,sh=port?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);

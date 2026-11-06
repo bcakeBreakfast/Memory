@@ -1,6 +1,7 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
 window.STR = {
 de: {
+  toMenuS: "Menü", skipS: "Weiter", backS: "Zurück",
   diag: "Ton & Vibration testen", diagSub: "Finde heraus, was auf deinem Gerät geht",
   loudAlways: "Ton auch bei Lautlos", loudAlwaysSub: "Spielt trotz Lautlos-Schalter, pausiert aber deine Musik",
   dTitle: "Test", dInfo: "Gerät", dSound: "Ton", dHaptic: "Vibration",
@@ -72,6 +73,7 @@ de: {
   progressN: "{i} / {n}"
 },
 en: {
+  toMenuS: "Menu", skipS: "Skip", backS: "Back",
   diag: "Test sound & haptics", diagSub: "Find out what works on your device",
   loudAlways: "Sound in silent mode", loudAlwaysSub: "Plays despite the silent switch, but pauses your music",
   dTitle: "Test", dInfo: "Device", dSound: "Sound", dHaptic: "Haptics",
