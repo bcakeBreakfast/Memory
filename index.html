@@ -99,7 +99,8 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .msg.haslives .lives{display:inline-flex}
 .msg .lives i{width:12px;height:12px;display:block;border:3px solid var(--k);background:var(--p);transform:rotate(45deg);transition:background .2s,transform .3s}
 .msg .lives i.lost{background:transparent;transform:rotate(45deg) scale(.7)}
-#board{--gap:14px;flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--cols,2),var(--size,100px));grid-auto-rows:var(--size,100px);gap:var(--gap);justify-content:center;align-content:center}
+#board{--gap:12px;flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--hc,4),calc((var(--size,100px) - var(--gap)) / 2));grid-auto-rows:var(--size,100px);gap:var(--gap);justify-content:center;align-content:center}
+#v-game{padding-left:16px;padding-right:16px;gap:12px}
 .card{position:relative;width:var(--size);height:var(--size);padding:0;border:0;background:none;perspective:900px;filter:drop-shadow(5px 5px 0 var(--k));animation:deal .45s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--i) * 35ms)}
 @keyframes deal{from{opacity:0;transform:translateY(24px) scale(.7)}}
 .inner{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
@@ -615,10 +616,21 @@ function setMsg(text,mode){msg.querySelector('.mt').textContent=text;msg.classLi
 function drawLives(){msg.classList.toggle('haslives',lives>0);msg.querySelector('.lives').innerHTML=Array.from({length:lives},(_,i)=>'<i class="'+(i<lives-miss?'':'lost')+'"></i>').join('')}
 function hud(){$('#hPairs').textContent=matched+'/'+pairs;$('#hMoves').textContent=moves;$('#hTime').textContent=mmss(elapsed())}
 function layout(){
-  const n=board.children.length,w=board.clientWidth,h=board.clientHeight;if(!n||!w||!h)return;
-  const g=14;let best=0,bc=2;
-  for(let c=2;c<=6;c++){const r=Math.ceil(n/c);const s=Math.min((w-(c-1)*g-6)/c,(h-(r-1)*g-6)/r);if(s>best+.5){best=s;bc=c}}
-  board.style.setProperty('--cols',bc);board.style.setProperty('--size',Math.floor(Math.min(best,190))+'px');
+  const cards=[...board.children],n=cards.length,w=board.clientWidth,h=board.clientHeight;if(!n||!w||!h)return;
+  const g=12;let best=null;
+  // Karten gleichmäßig auf r Reihen verteilen (Unterschied höchstens 1, nie eine Karte allein), größte Kartengröße gewinnt
+  for(let r=1;r<=Math.ceil(n/2);r++){
+    const base=Math.floor(n/r),extra=n%r,mx=base+(extra?1:0);if(mx>6||base<2&&r>1)continue;
+    const s=Math.min((w-(mx-1)*g-8)/mx,(h-(r-1)*g-8)/r);
+    const even=extra===0?1.04:1;if(!best||s*even>best.score)best={r,mx,base,extra,s,score:s*even};
+  }
+  const size=Math.floor(Math.min(best.s,190));
+  board.style.setProperty('--size',size+'px');board.style.setProperty('--hc',best.mx*2);
+  let i=0;
+  for(let row=0;row<best.r;row++){
+    const cnt=best.base+(row<best.extra?1:0),off=best.mx-cnt;
+    for(let c=0;c<cnt;c++,i++){cards[i].style.gridRow=String(row+1);cards[i].style.gridColumn=(1+off+c*2)+' / span 2'}
+  }
 }
 addEventListener('resize',layout);
 function clock(on){running=on;clearInterval(tick);if(on){t0=Date.now();tick=setInterval(hud,250)}}
@@ -668,7 +680,7 @@ function swapTwo(){
   const hidden=shuffle([...board.children].filter(c=>!c.classList.contains('up')&&!c.classList.contains('done')));
   if(hidden.length<2)return;
   const [x,y]=hidden,rx=x.getBoundingClientRect(),ry=y.getBoundingClientRect(),ph=document.createElement('span');
-  board.replaceChild(ph,x);board.replaceChild(x,y);board.replaceChild(y,ph);
+  board.replaceChild(ph,x);board.replaceChild(x,y);board.replaceChild(y,ph);layout();
   [[x,rx],[y,ry]].forEach(([el,r])=>{const n=el.getBoundingClientRect();el.style.animation='none';el.style.transition='none';
     el.style.transform='translate('+(r.left-n.left)+'px,'+(r.top-n.top)+'px)';el.classList.add('swap');el.offsetWidth;
     el.style.transition='transform .55s cubic-bezier(.6,0,.2,1)';el.style.transform=''});
@@ -721,8 +733,8 @@ function celebrate(){
 
 /* Zwischenspiele: Reihenfolge, N-Back, Muster-Strom */
 const MINI=[
-  {key:'seq',name:'Reihenfolge',info:'Die Bilder leuchten nacheinander auf. Tipp sie in derselben Reihenfolge nach. Jede Runde kommt eins dazu.',unit:'Länge'},
-  {key:'nback',name:'N-Back',info:'Bilder erscheinen nacheinander. Tipp auf „Gleich!“, wenn das Bild dasselbe ist wie das vorletzte. Beispiel: A · B · A → tippen!',unit:'%'},
+  {key:'seq',name:'Reihenfolge',info:'Die Bilder leuchten nacheinander auf. Tipp sie in derselben Reihenfolge nach. Jede Runde kommt eins dazu.',unit:'Längste Folge'},
+  {key:'nback',name:'N-Back',info:'Bilder erscheinen nacheinander. Tipp auf „Gleich!“, wenn das Bild dasselbe ist wie das vorletzte. Beispiel: A · B · A → tippen!',unit:'Trefferquote'},
   {key:'stream',name:'Muster-Strom',info:'Merk dir das Zielbild. Danach rauschen Bilder vorbei, immer schneller. Tipp nur, wenn das Zielbild kommt.',unit:'Punkte'}];
 let mg=null,mTimers=[],afterMini=null;
 const mLater=(f,ms)=>mTimers.push(setTimeout(f,ms));
@@ -741,7 +753,7 @@ function openMini(i,then){
 function endMini(score,detail){
   mStop();$('#mStage').onclick=null;const k=mg.key,rec=score>(S.mini[k]||0);if(rec)S.mini[k]=score;S.mini.idx=(mg.i+1)%3;save();
   $('#mInfo').hidden=true;$('#mStat').innerHTML='';
-  $('#mStage').innerHTML='<div class="mres"><span>'+mg.unit+'</span><b>'+score+(k==='nback'?'%':'')+'</b><span>'+detail+'</span>'+(rec&&score>0?'<span class="rec">Neuer Bestwert!</span>':'<span>Bestwert: '+(S.mini[k]||0)+(k==='nback'?' %':'')+'</span>')+'</div>';
+  $('#mStage').innerHTML='<div class="mres"><span>'+mg.unit+'</span><b>'+score+(k==='nback'?' %':'')+'</b><span>'+detail+'</span>'+(rec&&score>0?'<span class="rec">Neuer Bestwert!</span>':'<span>Bestwert: '+(S.mini[k]||0)+(k==='nback'?' %':'')+'</span>')+'</div>';
   if(rec&&score>0){SFX.win();buzz([20,40,20])}else SFX.tap();
   $('#mBtn').hidden=false;$('#mSkip').hidden=true;
   $('#mBtnLbl').textContent=afterMini?'Weiter: Runde '+S.round:'Fertig';
@@ -844,10 +856,15 @@ $('#lQuit').addEventListener('click',()=>{SFX.tap();toMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&$('#v-game').classList.contains('on')&&!$('#o-pause').classList.contains('on')){acc+=Date.now()-t0;clock(false);openOv('o-pause')}});
 
 /* PWA: Offline, Updates, Installieren */
-const VERSION='1.2.0';$('#ver').textContent=VERSION;
+const VERSION='1.2.1';$('#ver').textContent=VERSION;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 if(standalone)document.documentElement.classList.add('standalone');
-const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function sizeApp(){if(!standalone)return;const a=$('#app'),port=innerHeight>=innerWidth;
+  const sh=isIOS?(port?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width)):innerHeight;
+  const hgt=Math.max(innerHeight,sh);a.style.height=hgt+'px';a.style.bottom='auto';
+  document.documentElement.style.background=getComputedStyle(document.body).backgroundColor;layout();fitSoon()}
+addEventListener('resize',sizeApp);addEventListener('orientationchange',()=>setTimeout(sizeApp,300));
 let deferredPrompt=null;
 function showToast(txt,btn,fn){$('#toastTxt').textContent=txt;$('#toastBtn').textContent=btn;$('#toastBtn').onclick=fn;$('#toast').classList.add('on')}
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
@@ -870,7 +887,7 @@ $('#sInstall').addEventListener('click',async()=>{SFX.tap();
   else openOv('o-ios')});
 $('#iosOk').addEventListener('click',()=>closeOv('o-ios'));
 
-applySet();
+applySet();sizeApp();
 const startTab=Object.keys(HASH).find(k=>HASH[k]===location.hash.slice(1))||'home';
 goTab(startTab,true);
 if(!S.intro)openIntro();
