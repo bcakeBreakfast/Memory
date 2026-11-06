@@ -448,7 +448,7 @@ body.calm .fx,body.calm .flash{display:none}
 </div>
 </div>
 <script>
-const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg');
+const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=124');
 const ALL=IMGS.length,MAXP=8;
 IMGS.forEach(s=>{const im=new Image();im.src=s});
 const NEED=[2,3,3,4,4,5,5,6];
@@ -859,7 +859,7 @@ $('#lQuit').addEventListener('click',()=>{SFX.tap();toMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&$('#v-game').classList.contains('on')&&!$('#o-pause').classList.contains('on')){acc+=Date.now()-t0;clock(false);openOv('o-pause')}});
 
 /* PWA: Offline, Updates, Installieren */
-const VERSION='1.2.3';$('#ver').textContent=VERSION;
+const VERSION='1.2.4';$('#ver').textContent=VERSION;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 if(standalone)document.documentElement.classList.add('standalone');
