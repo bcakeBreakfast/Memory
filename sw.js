@@ -1,8 +1,8 @@
 /* Memo Punch Service Worker: alles vorab cachen, offline aus dem Cache spielen. */
-const CACHE = 'memo-punch-1.1.3';
+const CACHE = 'memo-punch-1.2.0';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
-  './img/t1.svg', './img/t2.svg', './img/t3.svg', './img/t4.svg', './img/t5.svg', './img/t6.svg',
+  './img/t1.svg', './img/t2.svg', './img/t3.svg', './img/t4.svg', './img/t5.svg', './img/t6.svg', './img/t7.svg', './img/t8.svg', './img/t9.svg', './img/t10.svg',
   './fonts/archivo-black.woff2', './fonts/space-grotesk-500.woff2', './fonts/space-grotesk-700.woff2',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'
 ];
