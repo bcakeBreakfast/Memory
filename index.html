@@ -521,8 +521,8 @@ function goTab(t,fromHash){
 }
 $$('[data-tab]').forEach(b=>b.addEventListener('click',()=>{SFX.tap();goTab(b.dataset.tab)}));
 addEventListener('hashchange',()=>{const t=Object.keys(HASH).find(k=>HASH[k]===location.hash.slice(1));if(t&&!$('#v-game').classList.contains('on'))goTab(t,true)});
-function openOv(id){$('#'+id).classList.add('on');fitSoon()}
-function closeOv(id){$('#'+id).classList.remove('on')}
+function openOv(id){$('#'+id).classList.add('on');fitSoon();window.bgSync&&bgSync()}
+function closeOv(id){$('#'+id).classList.remove('on');window.bgSync&&bgSync()}
 
 /* Start */
 function renderHome(){
@@ -584,7 +584,7 @@ function renderSettings(){$$('[data-set]').forEach(r=>r.setAttribute('aria-check
 $$('[data-set]').forEach(r=>r.addEventListener('click',()=>{const k=r.dataset.set;S.set[k]=!S.set[k];save();renderSettings();applySet();SFX.tap();if(k==='haptic')buzz(20)}));
 function applySet(){document.body.classList.toggle('calm',!!S.set.calm);
   const t=S.set.theme==='monster'?'monster':'punch';document.documentElement.classList.toggle('t-monster',t==='monster');
-  document.querySelector('meta[name=theme-color]').setAttribute('content',t==='monster'?'#6DE64C':'#FFE600');
+  document.querySelector('meta[name=theme-color]').setAttribute('content',t==='monster'?'#6DE64C':'#FFE600');window.bgSync&&bgSync();
   $$('[data-theme]').forEach(b=>b.setAttribute('aria-checked',b.dataset.theme===t))}
 $$('[data-theme]').forEach(b=>b.addEventListener('click',()=>{S.set.theme=b.dataset.theme;save();applySet();SFX.tap();buzz(10)}));
 let confirmFn=null;
@@ -856,14 +856,19 @@ $('#lQuit').addEventListener('click',()=>{SFX.tap();toMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&$('#v-game').classList.contains('on')&&!$('#o-pause').classList.contains('on')){acc+=Date.now()-t0;clock(false);openOv('o-pause')}});
 
 /* PWA: Offline, Updates, Installieren */
-const VERSION='1.2.1';$('#ver').textContent=VERSION;
+const VERSION='1.2.2';$('#ver').textContent=VERSION;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 if(standalone)document.documentElement.classList.add('standalone');
-function sizeApp(){if(!standalone)return;const a=$('#app'),port=innerHeight>=innerWidth;
-  const sh=isIOS?(port?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width)):innerHeight;
-  const hgt=Math.max(innerHeight,sh);a.style.height=hgt+'px';a.style.bottom='auto';
-  document.documentElement.style.background=getComputedStyle(document.body).backgroundColor;layout();fitSoon()}
+function bgSync(){const ov=[...document.querySelectorAll('.ov.on')].filter(o=>!o.classList.contains('dim')).pop();
+  let c=ov?getComputedStyle(ov).backgroundColor:'';if(!c||c==='rgba(0, 0, 0, 0)')c=getComputedStyle(document.body).backgroundColor;
+  document.documentElement.style.background=c;const m=document.querySelector('meta[name=theme-color]');m&&m.setAttribute('content',c)}
+function sizeApp(){if(!standalone)return;const a=$('#app'),r=document.documentElement;
+  a.style.height=innerHeight+'px';a.style.bottom='auto';
+  const port=innerHeight>=innerWidth,sh=port?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);
+  // iOS reserviert unten schon Platz (Fläche unter der App): dann keinen zusätzlichen Home-Balken-Abstand einrechnen
+  if(isIOS&&sh-innerHeight>30)r.style.setProperty('--bot','0px');else r.style.removeProperty('--bot');
+  bgSync();layout();fitSoon()}
 addEventListener('resize',sizeApp);addEventListener('orientationchange',()=>setTimeout(sizeApp,300));
 let deferredPrompt=null;
 function showToast(txt,btn,fn){$('#toastTxt').textContent=txt;$('#toastBtn').textContent=btn;$('#toastBtn').onclick=fn;$('#toast').classList.add('on')}
