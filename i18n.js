@@ -1,4 +1,5 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
+window.STR_BUILD = 207;
 window.STR = {
 de: {
   toMenuS: "Menü", skipS: "Weiter", backS: "Zurück",

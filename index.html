@@ -365,8 +365,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=206"></script>
-<script src="content.js?v=206"></script>
+<script src="i18n.js?v=207"></script>
+<script src="content.js?v=207"></script>
 </head>
 <body>
 <div id="app">
@@ -573,8 +573,16 @@ body.calm .fx,body.calm .flash{display:none}
 </div>
 
 <script>
+/* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
+const BUILD=207;
+if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
+  try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
+  (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
+    if(window.caches){const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}}catch(e){}
+    location.reload()})();
+}
 /* ===== Grunddaten ===== */
-const VERSION='2.0.6';
+const VERSION='2.0.7';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
