@@ -101,13 +101,13 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .msg .lives i.lost{background:transparent;transform:rotate(45deg) scale(.7)}
 #board{--gap:12px;flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--hc,4),calc((var(--size,100px) - var(--gap)) / 2));grid-auto-rows:var(--size,100px);gap:var(--gap);justify-content:center;align-content:center}
 #v-game{padding-left:16px;padding-right:16px;gap:12px}
-.card{position:relative;width:var(--size);height:var(--size);padding:0;border:0;background:none;perspective:900px;filter:drop-shadow(5px 5px 0 var(--k));animation:deal .45s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--i) * 35ms)}
+.card{position:relative;width:var(--size);height:var(--size);padding:0;border:0;background:none;perspective:900px;animation:deal .45s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--i) * 35ms)}
 @keyframes deal{from{opacity:0;transform:translateY(24px) scale(.7)}}
 .inner{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
 .card.up .inner{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;display:block;overflow:hidden;border:3px solid var(--k);background:var(--w);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face{position:absolute;inset:0;display:block;overflow:hidden;border:3px solid var(--k);background:var(--w);box-shadow:5px 5px 0 var(--k);outline:1px solid transparent;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .front{transform:rotateY(180deg)}
-.front img{width:100%;height:100%;object-fit:cover;display:block}
+.front img{width:100%;height:100%;object-fit:cover;display:block;image-rendering:auto}
 .back{background:var(--k);display:flex;align-items:center;justify-content:center}
 .back::before{content:'';width:42%;aspect-ratio:1;border-radius:50%;background:var(--y);box-shadow:inset 0 0 0 calc(var(--size) * .05) var(--k),0 0 0 calc(var(--size) * .04) var(--y)}
 .card.swap .back{box-shadow:inset 0 0 0 5px var(--p)}
@@ -476,12 +476,16 @@ const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()
 
 /* Ton und Vibration */
 let AC=null;
-function tone(f,d,type,vol,at,f2){if(!S.set.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+function audioUnlock(){try{if(navigator.audioSession&&navigator.audioSession.type!=='ambient')navigator.audioSession.type='ambient';
+  AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();
+  if(!audioUnlock.done){const b=AC.createBuffer(1,1,22050),src=AC.createBufferSource();src.buffer=b;src.connect(AC.destination);src.start(0);audioUnlock.done=true}}catch(e){}}
+['pointerdown','touchend','click'].forEach(ev=>document.addEventListener(ev,audioUnlock,{capture:true,passive:true}));
+function tone(f,d,type,vol,at,f2){if(!S.set.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();
   const t=AC.currentTime+(at||0),o=AC.createOscillator(),g=AC.createGain();o.type=type||'square';o.frequency.setValueAtTime(f,t);
   if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(vol||.08,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
 const SFX={
-  tap:()=>tone(520,.05,'square',.05),
+  tap:()=>{tone(520,.05,'square',.05);buzz(5)},
   flip:()=>tone(700,.07,'triangle',.12,0,1100),
   match:()=>{tone(880,.09,'square',.07);tone(1320,.16,'square',.07,.08)},
   miss:()=>tone(200,.18,'sawtooth',.06,0,120),
@@ -491,12 +495,10 @@ const SFX={
     if(n>=5)[0,1,2].forEach(i=>tone(1568*k,.08,'square',.05,.9+i*.1))},
   lose:()=>[392,330,262].forEach((f,i)=>tone(f,.2,'sawtooth',.06,i*.14))};
 /* Vibration: Android über navigator.vibrate, iPhone (iOS 18+) über einen versteckten Systemschalter, der einen Tick auslöst */
-const hapticEl=(()=>{const l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.cssText='position:fixed;left:-99px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none';
-  l.innerHTML='<input type="checkbox" switch tabindex="-1">';document.body.appendChild(l);return l})();
+function hapticTick(){try{const l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.display='none';
+  const i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');l.appendChild(i);document.head.appendChild(l);l.click();l.remove()}catch(e){}}
 const canVibrate=typeof navigator.vibrate==='function';
-const buzz=p=>{if(!S.set.haptic)return;
-  try{if(canVibrate){navigator.vibrate(p);return}
-    const n=Array.isArray(p)?Math.ceil(p.length/2):1;hapticEl.click();for(let i=1;i<Math.min(n,3);i++)setTimeout(()=>hapticEl.click(),i*90)}catch(e){}};
+const buzz=p=>{if(!S.set.haptic)return;try{if(canVibrate){navigator.vibrate(p);return}hapticTick()}catch(e){}};
 
 
 /* Überschriften an die Breite anpassen */
@@ -662,15 +664,16 @@ function startRound(){
 function go(){lock=false;peeking=false;clock(true);setMsg(lives?'Fehler frei':(st?st.name:'Runde '+S.round));drawLives()}
 function flip(c){
   if(lock||c.classList.contains('up')||c.classList.contains('done'))return;
-  c.classList.add('up');c.setAttribute('aria-label','Aufgedeckte Karte');open.push(c);SFX.flip();buzz(6);
+  c.classList.add('up');c.setAttribute('aria-label','Aufgedeckte Karte');open.push(c);SFX.flip();if(open.length<2)buzz(6);
   if(open.length<2)return;
   moves++;hud();lock=true;const [a,b]=open;
+  buzz(a.dataset.id===b.dataset.id?[10,40,10]:30);
   if(a.dataset.id===b.dataset.id){
-    later(()=>{a.classList.add('done');b.classList.add('done');SFX.match();buzz([10,40,10]);open=[];lock=false;matched++;S.found[+a.dataset.id]++;hud();
+    later(()=>{a.classList.add('done');b.classList.add('done');SFX.match();open=[];lock=false;matched++;S.found[+a.dataset.id]++;hud();
       if(matched===pairs){stopAll();later(win,650)}},380);
   }else{
     miss++;
-    later(()=>{a.classList.add('no');b.classList.add('no');SFX.miss();buzz(30);if(lives)drawLives()},450);
+    later(()=>{a.classList.add('no');b.classList.add('no');SFX.miss();if(lives)drawLives()},450);
     later(()=>{[a,b].forEach(x=>{x.classList.remove('up','no');x.setAttribute('aria-label','Verdeckte Karte')});open=[];
       if(lives&&miss>=lives)return lose();
       if(st&&st.swap){swapTwo();later(()=>{lock=false},650)}else lock=false},1000);
@@ -856,7 +859,7 @@ $('#lQuit').addEventListener('click',()=>{SFX.tap();toMenu()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running&&$('#v-game').classList.contains('on')&&!$('#o-pause').classList.contains('on')){acc+=Date.now()-t0;clock(false);openOv('o-pause')}});
 
 /* PWA: Offline, Updates, Installieren */
-const VERSION='1.2.2';$('#ver').textContent=VERSION;
+const VERSION='1.2.3';$('#ver').textContent=VERSION;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 if(standalone)document.documentElement.classList.add('standalone');
