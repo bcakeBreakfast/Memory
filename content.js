@@ -12,7 +12,7 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 222; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 223; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
@@ -29,8 +29,12 @@ window.CONTENT = {
   // Leere Liste = die eingebauten Tusche-Ornamente werden benutzt.
   // Beispiel: ornamente: ["deko/spirale.svg", "deko/bluete.png", "deko/blatt.svg"]
   deko: {
-    ornamente: ["deko/blatt.svg", "deko/zweige.svg", "deko/stern.svg", "deko/beeren.svg", "deko/schnecke.svg",
-                "deko/tropfen.svg", "deko/schleife.svg", "deko/ranke.svg", "deko/auge.svg"]
+    // Ein Eintrag ist entweder nur der Dateiname oder { datei, groesse } mit einem Größenfaktor (1 = normal).
+    ornamente: [
+      "deko/blatt.svg", "deko/zweige.svg", "deko/stern.svg", "deko/beeren.svg", "deko/schnecke.svg",
+      { datei: "deko/tropfen.svg", groesse: 1.6 }, "deko/schleife.svg",
+      { datei: "deko/ranke.svg", groesse: 1.5 }, "deko/auge.svg"
+    ]
   },
 
   // Copyright: erscheint auf der Projektseite, unter jedem Bild und in den Optionen.
