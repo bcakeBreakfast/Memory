@@ -12,7 +12,7 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 212; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 215; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
@@ -21,6 +21,15 @@ window.CONTENT = {
       de: "[Wie Memo Punch entstanden ist: eine Zusammenarbeit aus Zeichnung und Gestaltung. Hier steht euer gemeinsamer Text.]",
       en: "[How Memo Punch came about: a collaboration between drawing and design. Your shared text goes here.]"
     }
+  },
+
+  // Eigene Ornamente für die Karte (Spiralen, Blüten usw. neben dem Weg).
+  // So geht's: Zeichnung scannen, freistellen, als SVG oder PNG mit transparentem
+  // Hintergrund in den Ordner "deko" legen (quadratisch, ca. 300 × 300 px) und hier eintragen.
+  // Leere Liste = die eingebauten Tusche-Ornamente werden benutzt.
+  // Beispiel: ornamente: ["deko/spirale.svg", "deko/bluete.png", "deko/blatt.svg"]
+  deko: {
+    ornamente: []
   },
 
   // Copyright: erscheint auf der Projektseite, unter jedem Bild und in den Optionen.

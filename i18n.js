@@ -1,5 +1,5 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 212;
+window.STR_BUILD = 215;
 window.STR = {
 de: {
   prologueTag: "Prolog", prologueTitle: "Es war<br>einmal …", startStory: "Weiter",

@@ -42,3 +42,9 @@ Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischal
 
 ## Rechte
 Zeichnungen, Gestaltung und Code: alle Rechte vorbehalten, siehe `LICENSE`. Schriften: SIL Open Font License.
+
+## Eigene Ornamente auf der Karte
+1. Zeichnung scannen, freistellen und als SVG oder PNG mit transparentem Hintergrund speichern (quadratisch, ca. 300 × 300 px, schwarze Tusche).
+2. Datei in den Ordner `deko/` legen.
+3. In `content.js` unter `deko.ornamente` eintragen: `ornamente: ["deko/spirale.svg", "deko/bluete.png"]`.
+Die Karte verteilt und dreht die Ornamente automatisch und hält Abstand zu den Stationen. Bleibt die Liste leer, erscheinen die eingebauten Ornamente.

@@ -1,0 +1,3 @@
+Hier kommen eigene Ornamente für die Karte hinein (SVG oder PNG mit transparentem Hintergrund,
+quadratisch, ca. 300 x 300 px). Danach in content.js unter deko.ornamente eintragen, z. B.
+  ornamente: ["deko/spirale.svg", "deko/bluete.png"]
