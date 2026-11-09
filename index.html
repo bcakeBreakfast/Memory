@@ -454,8 +454,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=221"></script>
-<script src="content.js?v=221"></script>
+<script src="i18n.js?v=222"></script>
+<script src="content.js?v=222"></script>
 </head>
 <body>
 <div id="app">
@@ -672,7 +672,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
-const BUILD=221;
+const BUILD=222;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -680,7 +680,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.2.1';
+const VERSION='2.2.2';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -866,14 +866,14 @@ function renderMap(){
       const r=(2.8+4.6*(.5+.5*Math.sin(k*1.9))*(.65+RD()*.55)).toFixed(1);gp=7+r*1.5;const x=(q[0]+(RD()-.5)*3).toFixed(1),y=(q[1]+(RD()-.5)*3).toFixed(1);k++;
       band+=done?'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#000"/>':'<circle cx="'+x+'" cy="'+y+'" r="'+Math.max(2.4,r*.8).toFixed(1)+'" fill="var(--w)" stroke="#000" stroke-width="2"/>'}}
   /* Ornamente: nie über Stationen (Mindestabstand), manche ragen über den Rand */
-  const DK=((C.deko||{}).ornamente||[]).filter(Boolean),ORN=DK.length?DK.map(f=>(x,y,s,r)=>'<image href="'+esc(f)+'" x="'+(x-s/2).toFixed(1)+'" y="'+(y-s/2).toFixed(1)+'" width="'+s.toFixed(1)+'" height="'+s.toFixed(1)+'" transform="rotate('+(r*57).toFixed(0)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>'):DOODLES;
+  const DK=((C.deko||{}).ornamente||[]).filter(Boolean),ORN=DK.length?DK.map(f=>(x,y,s,r)=>(s=s*1.7,r=(r-3.14)*.25,1)&&'<image href="'+esc(f)+'" x="'+(x-s/2).toFixed(1)+'" y="'+(y-s/2).toFixed(1)+'" width="'+s.toFixed(1)+'" height="'+s.toFixed(1)+'" transform="rotate('+(r*57).toFixed(0)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>'):DOODLES;
   const R=rng(7),near=(x,y,r)=>P.slice(0,ALL).some(q=>Math.hypot(q[0]-x,q[1]-y)<r);
-  let orn='',bg='';
+  let orn='',bg='',kk=0;const placed=[],SF=DK.length?1.7:1,free=(x,y,z)=>!placed.some(q=>Math.hypot(q[0]-x,q[1]-y)<(q[2]+z)*SF*.5),put=(t,x,y,z,r)=>{placed.push([x,y,z]);orn+=ORN[t](x,y,z,r,R)};
   for(let i=0;i<N-1;i++){const a=P[i],b=P[i+1],my=(a[1]+b[1])/2,mx=(a[0]+b[0])/2,side=mx<W/2?1:-1;
-    const edge=R()<.35,ox=edge?(side>0?W-8+R()*14:8-R()*14):W/2+side*W*(0.3+R()*0.08),oy=my+(R()-.5)*30,sz=(edge?62:46)+R()*26,type=Math.floor(R()*ORN.length);
-    if(!near(ox,oy,78))orn+=ORN[type](ox,oy,sz,R()*6.28,R);
-    if(R()>.35){const t2=ORN.length>1?(type+1+Math.floor(R()*(ORN.length-1)))%ORN.length:0,oy2=a[1]+(R()-.5)*20,ox2=a[0]<W/2?W*(0.84+R()*.08):W*(0.16-R()*.08);
-      if(!near(ox2,oy2,70))orn+=ORN[t2](ox2,oy2,30+R()*18,R()*6.28,R)}}
+    const edge=R()<.35,ox=edge?(side>0?W-8+R()*14:8-R()*14):W/2+side*W*(0.3+R()*0.08),oy=my+(R()-.5)*30,sz=(edge?62:46)+R()*26,type=DK.length?(kk++)%ORN.length:Math.floor(R()*ORN.length);
+    if(!near(ox,oy,44+sz*SF*.5)&&free(ox,oy,sz))put(type,ox,oy,sz,R()*6.28);
+    if(R()>.35){const t2=DK.length?(kk++)%ORN.length:ORN.length>1?(type+1+Math.floor(R()*(ORN.length-1)))%ORN.length:0,oy2=a[1]+(R()-.5)*20,ox2=a[0]<W/2?W*(0.84+R()*.08):W*(0.16-R()*.08);
+      {const z2=30+R()*18;if(!near(ox2,oy2,44+z2*SF*.5)&&free(ox2,oy2,z2))put(t2,ox2,oy2,z2,R()*6.28)}}}
   /* Hintergrund: große, dezente Formen in einem dunkleren Ton des Grunds, angeschnitten */
   const R2=rng(19),BGF=[
     (x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="var(--y2)"/>',
@@ -883,7 +883,7 @@ function renderMap(){
   for(let y=60;y<H+240;y+=170+R2()*90){const left=R2()<.5,x=left?-20+R2()*40:W+20-R2()*40;bg+=BGF[Math.floor(R2()*BGF.length)](x,y,70+R2()*70)}
   const EXT=260;
   let h='<svg class="mapsvg lay-bg" height="'+(H+EXT)+'" width="'+W+'" style="top:'+(-EXT)+'px" aria-hidden="true"><g transform="translate(0 '+EXT+')">'+bg+'</g></svg>'+
-    '<svg class="mapsvg lay-orn" height="'+(H+EXT)+'" width="'+W+'" style="top:'+(-EXT/2)+'px" aria-hidden="true"><defs><filter id="wob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g transform="translate(0 '+(EXT/2)+')" filter="url(#wob)">'+orn+'</g></svg>'+
+    '<svg class="mapsvg lay-orn" height="'+(H+EXT)+'" width="'+W+'" style="top:'+(-EXT/2)+'px" aria-hidden="true"><defs><filter id="wob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g transform="translate(0 '+(EXT/2)+')"'+(DK.length?'':' filter="url(#wob)"')+'>'+orn+'</g></svg>'+
     '<svg class="mapsvg" height="'+H+'" width="'+W+'" aria-hidden="true"><defs><filter id="wob2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#wob2)">'+band+'</g></svg>';
   const cur=Math.min(S.unlocked,ALL)-1,boss=bossNext();
   for(let i=0;i<ALL;i++){const [x,y]=P[i],rot=((i*37)%9-4)+'deg',a=actStarts(i)?actFor(i):null;
