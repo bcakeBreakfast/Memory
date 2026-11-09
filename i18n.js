@@ -39,7 +39,7 @@ de: {
   bestTimes: "Bestzeiten", miniGames: "Mini-Spiele", pairsN: "{n} Paare", movesN: "{n} Züge", lengthN: "Länge {n}", pointsN: "{n} P.",
   settings: "Optionen", colors: "Farben", language: "Sprache",
   sound: "Töne", soundSub: "Papier, Pinsel, Stempel",
-  haptic: "Vibration", hapticSub: "iPhone ab iOS 18 und Android",
+  haptic: "Vibration", hapticSub: "Kurzes Ruckeln bei Treffern",
   calm: "Ruhige Effekte", calmSub: "Kein Konfetti, kein Wackeln",
   bigText: "Größere Schrift", bigTextSub: "Alle Texte etwas größer",
   install: "App installieren", installSub: "Auf den Homebildschirm legen", installSubIOS: "So geht es auf dem iPhone",
