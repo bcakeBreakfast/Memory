@@ -1,7 +1,12 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 215;
+window.STR_BUILD = 220;
 window.STR = {
 de: {
+  difficulty: "Schwierigkeit", modeEasy: "Anfänger", modePro: "Profi",
+  modeNoteEasy: "Karten bleiben länger sichtbar, Prüfungen haben ein Leben mehr.",
+  modeNotePro: "Kürzer zeigen. Ab Bild 4 tauschen Karten nach Fehlern und Fehler sind begrenzt, ab Bild 6 sind Karten gedreht.",
+  jokerAria: "Joker: alle Karten kurz aufdecken, {n} übrig", combo: "Combo ×{n}", jokerWon: "+1 Joker",
+  starsN: "{n} von 3 Sternen", starsTotal: "{n} Sterne gesamt",
   prologueTag: "Prolog", prologueTitle: "Es war<br>einmal …", startStory: "Weiter",
   bossPlay: "Prüfung!", bossTag: "Prüfung", bossMsg: "Prüfung · Finde gleiche Kleckse",
   bossReady: "Prüfung bereit: Bild {n} freispielen", bossSoon1: "Noch 1 Sieg bis zur Prüfung", bossSoonN: "Noch {r} Siege bis zur Prüfung",
@@ -80,6 +85,11 @@ de: {
   progressN: "{i} / {n}"
 },
 en: {
+  difficulty: "Difficulty", modeEasy: "Beginner", modePro: "Pro",
+  modeNoteEasy: "Cards stay visible longer, trials give you one extra life.",
+  modeNotePro: "Shorter peek. From image 4, cards swap after mistakes and mistakes are limited; from image 6, cards are rotated.",
+  jokerAria: "Joker: reveal all cards briefly, {n} left", combo: "Combo ×{n}", jokerWon: "+1 Joker",
+  starsN: "{n} of 3 stars", starsTotal: "{n} stars in total",
   prologueTag: "Prologue", prologueTitle: "Once upon<br>a time …", startStory: "Next",
   bossPlay: "Trial!", bossTag: "Trial", bossMsg: "Trial · Match the blots",
   bossReady: "Trial ready: win image {n}", bossSoon1: "1 more win to the trial", bossSoonN: "{r} more wins to the trial",
@@ -112,7 +122,7 @@ en: {
   bestTimes: "Best times", miniGames: "Mini games", pairsN: "{n} pairs", movesN: "{n} moves", lengthN: "Length {n}", pointsN: "{n} pts",
   settings: "Settings", colors: "Colours", language: "Language",
   sound: "Sound", soundSub: "Paper, brush, stamp",
-  haptic: "Haptics", hapticSub: "iPhone with iOS 18+ and Android",
+  haptic: "Haptics", hapticSub: "A short buzz on matches",
   calm: "Calm effects", calmSub: "No confetti, no shaking",
   bigText: "Larger text", bigTextSub: "All text a little bigger",
   install: "Install app", installSub: "Add to home screen", installSubIOS: "How to on iPhone",
