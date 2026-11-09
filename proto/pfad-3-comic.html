@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>Pfad-Entwurf 3 · Comic</title>
+<link rel="stylesheet" href="proto.css">
+<style>
+/* Idee: Der Fortschritt ist ein Comicheft. Jedes gewonnene Bild ist ein Panel,
+   die Geschichte steht in Erzählkästen und Sprechblasen. Man liest sich nach unten. */
+body{background:#fff}
+.page{padding:calc(16px + env(safe-area-inset-top)) 14px calc(110px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
+.cover{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:5px solid #000;padding-bottom:10px;margin-bottom:4px}
+.cover .h{font-size:40px}
+.cover .h small{display:block;font-size:13px;letter-spacing:.14em;margin-bottom:4px;font-family:'Space Grotesk';font-weight:700}
+.cover .issue{border:3px solid #000;padding:4px 8px;font-family:'Archivo Black';font-size:13px;transform:rotate(4deg);background:#FFE600}
+.row{display:grid;gap:12px;grid-template-columns:1.45fr 1fr}
+.row.flip{grid-template-columns:1fr 1.45fr}
+.row.flip .art{order:2}
+.p{position:relative;border:4px solid #000;overflow:hidden;background:#fff;min-height:170px}
+.p.full{min-height:220px}
+.art{padding:0;cursor:pointer}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cap{position:absolute;left:-4px;top:-4px;background:#FFE600;border:3px solid #000;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:4px 8px;z-index:2}
+.txt{background:var(--c);color:#fff;padding:14px 12px;display:flex;align-items:flex-end;font-weight:700;font-size:13px;line-height:1.38;text-transform:uppercase;letter-spacing:.01em}
+.txt.light{color:#000}
+.txt::before{content:'';position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.18) 1.2px,transparent 1.6px) 0 0/7px 7px;pointer-events:none}
+.txt span{position:relative}
+.bubble{position:absolute;right:10px;bottom:12px;max-width:68%;background:#fff;border:3px solid #000;border-radius:22px;padding:9px 12px;font-weight:700;font-size:12.5px;line-height:1.3;text-transform:uppercase;z-index:2}
+.bubble::after{content:'';position:absolute;right:26px;bottom:-14px;width:18px;height:18px;background:#fff;border-right:3px solid #000;border-bottom:3px solid #000;transform:skewX(-30deg) rotate(30deg)}
+.klecks{position:absolute;right:-6px;bottom:-10px;width:56px;z-index:3;transform:rotate(-8deg)}
+.boom{position:absolute;left:8px;bottom:8px;z-index:3;width:130px;height:86px;animation:boom .7s cubic-bezier(.2,1.8,.4,1) .2s both}
+.boom svg{width:100%;height:100%;overflow:visible}
+@keyframes boom{from{transform:scale(0) rotate(-30deg)}to{transform:scale(1) rotate(-6deg)}}
+.dark{background:#000;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:22px 20px;gap:10px}
+.dark .h{font-size:24px;color:#FFE600}
+.dark p{font-size:14px;line-height:1.5}
+.lock{background:#000;display:grid;place-items:center;color:#fff;font-family:'Archivo Black';font-size:38px}
+.lock::before{content:'';position:absolute;inset:0;background:radial-gradient(#333 1.5px,transparent 2px) 0 0/8px 8px}
+.lock span{position:relative}
+.next{background:#FF2E88;display:grid;place-items:center;color:#fff;cursor:pointer;text-align:center}
+.next::before{content:'';position:absolute;inset:0;background:radial-gradient(rgba(0,0,0,.2) 2px,transparent 2.5px) 0 0/9px 9px}
+.next div{position:relative}
+.next .h{font-size:58px}
+.next small{display:block;font-weight:700;font-size:12px;letter-spacing:.1em;margin-top:4px}
+.tbc{text-align:center;font-family:'Archivo Black';font-size:16px;text-transform:uppercase;padding:12px 0;border-top:3px dashed #000;margin-top:8px}
+.new{animation:panelIn .7s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes panelIn{from{transform:translateY(30px) rotate(-3deg);opacity:0}}
+</style>
+</head>
+<body>
+<main class="page" id="page"></main>
+<script src="../content.js?v=223"></script>
+<script src="proto.js"></script>
+<script>
+const KLECKS='<svg class="klecks" viewBox="0 0 46 46" aria-hidden="true"><path d="M23 4c9 0 12 6 17 9s5 13 1 18-7 11-16 11S8 40 5 34 1 20 6 14 14 4 23 4z" fill="#FF2E88" stroke="#000" stroke-width="3"/><circle cx="17" cy="21" r="4.5" fill="#fff" stroke="#000" stroke-width="2.5"/><circle cx="29" cy="21" r="4.5" fill="#fff" stroke="#000" stroke-width="2.5"/><circle cx="16" cy="20" r="1.8"/><circle cx="28" cy="20" r="1.8"/><ellipse cx="23" cy="32" rx="4" ry="3" fill="#000"/></svg>';
+const BOOM=w=>'<div class="boom"><svg viewBox="0 0 130 86"><path d="M65 2l9 18 20-12-2 22 26-4-14 18 24 10-24 8 12 18-24-4 2 18-20-12-11 16-9-18-20 12 2-22-24 4 14-18L2 46l24-8L14 20l24 4-2-18 20 12z" fill="#FFE600" stroke="#000" stroke-width="3.5"/><text x="65" y="53" text-anchor="middle" font-family="Archivo Black" font-size="22">'+w+'</text></svg></div>';
+const WORDS=['PLOPP!','SPLASH!','WUSCH!','TATAA!','KLECKS!'];
+const first=s=>s.split(/(?<=[.!?])\s/)[0];
+function render(isNew){
+  let h='<div class="cover"><div class="h"><small>Die Abenteuer von</small>Klecks</div><div class="issue">Heft 1 · '+U+'/'+N+'</div></div>';
+  h+='<div class="p full dark"><div class="h">Es war einmal …</div><p>'+PROLOG+'</p>'+KLECKS+'</div>';
+  for(let i=0;i<N;i++){
+    const nw=isNew&&i===U-1?' new':'';
+    if(i<U){const splash=i%3===2;
+      if(splash){h+='<button class="p full art'+nw+'" data-i="'+i+'" id="s'+i+'" style="min-height:250px"><img src="'+IM(i)+'" alt=""><span class="cap">'+(i+1)+' · '+T(i)+'</span><span class="bubble">'+first(STEP(i))+'</span>'+(i===U-1?BOOM(WORDS[i%5]):'')+'</button>'}
+      else{const c=col(i),light=['#FFB800','#FF8A00','#00B3D6'].includes(c);
+        h+='<div class="row'+(i%2?' flip':'')+nw+'" id="s'+i+'"><button class="p art" data-i="'+i+'"><img src="'+IM(i)+'" alt=""><span class="cap">'+(i+1)+' · '+T(i)+'</span>'+(i===U-1?BOOM(WORDS[i%5]):'')+'</button><div class="p txt'+(light?' light':'')+'" style="--c:'+c+'"><span>'+STEP(i)+'</span></div></div>'}}
+    else if(i===U){h+='<button class="p full next" data-i="'+i+'" id="s'+i+'"><div><div class="h">?</div><small>PANEL '+(i+1)+' · GEWINNE DIE PRÜFUNG</small></div></button>'}
+    else{h+='<div class="row'+(i%2?' flip':'')+'"><div class="p lock"><span>???</span></div><div class="p lock" style="font-size:20px"><span>'+(i+1)+'</span></div></div>';if(i>U+1){h+='<div class="tbc">Fortsetzung folgt …</div>';break}}}
+  $('#page').innerHTML=h;
+  document.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>sheet(+b.dataset.i));
+}
+function centerOn(i,smooth){const el=$('#s'+i);if(el)scrollTo({top:el.offsetTop-innerHeight*.35,behavior:smooth?'smooth':'auto'})}
+window.onProgress=d=>{render(d>0);centerOn(U-1,true)};
+chrome(2);render();centerOn(U-1);
+</script>
+</body>
+</html>

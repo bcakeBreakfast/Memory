@@ -1,0 +1,29 @@
+/* Gemeinsame Basis der Pfad-Entwürfe */
+@font-face{font-family:'Archivo Black';src:url(../fonts/archivo-black.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url(../fonts/space-grotesk-500.woff2) format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Space Grotesk';src:url(../fonts/space-grotesk-700.woff2) format('woff2');font-weight:700;font-display:swap}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Space Grotesk',system-ui,sans-serif;font-weight:500;color:#000;max-width:480px;margin:0 auto;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.h{font-family:'Archivo Black';text-transform:uppercase;letter-spacing:-.02em;line-height:.95}
+
+/* Navigation zwischen den Entwürfen + Demo-Steuerung */
+.pnav{position:fixed;z-index:50;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:6px;
+  background:#000;color:#fff;padding:6px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-weight:700;font-size:13px;white-space:nowrap}
+.pnav a,.pnav button{color:#fff;text-decoration:none;border:0;background:#222;border-radius:999px;min-width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0 12px;font-weight:700}
+.pnav a{font-size:20px;padding:0}
+.pnav span{padding:0 6px}
+.pnav #dPlus{background:#FF2E88}
+.pnav.dark{background:#fff;color:#000}.pnav.dark a,.pnav.dark button{background:#eee;color:#000}.pnav.dark #dPlus{background:#FF2E88;color:#fff}
+
+/* Bild-Blatt (Antippen einer Station) */
+.sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.sheet.on{opacity:1;pointer-events:auto}
+.sheet .card{width:100%;max-width:480px;background:#fff;border-top:4px solid #000;padding:20px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(40px);transition:transform .3s cubic-bezier(.2,1.4,.4,1);display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:start}
+.sheet.on .card{transform:none}
+.sheet img{width:96px;height:96px;object-fit:cover;border:3px solid #000;box-shadow:5px 5px 0 var(--c,#000)}
+.sheet small{font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.sheet h3{font-family:'Archivo Black';font-size:22px;text-transform:uppercase;margin:2px 0 6px}
+.sheet p{font-size:15px;line-height:1.45}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F4F1EA">
+<title>Pfad-Entwurf 1 · Ranke</title>
+<link rel="stylesheet" href="proto.css">
+<style>
+/* Idee: Der Pfad ist eine Pflanze. Jeder Sieg lässt die Ranke weiterwachsen,
+   jedes Bild ist eine Blüte, die nächste Station eine Knospe. */
+body{background:#F4F1EA;background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1.2px);background-size:7px 7px}
+header{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:20;padding:calc(14px + env(safe-area-inset-top)) 20px 26px;
+  background:linear-gradient(#F4F1EA 60%,rgba(244,241,234,0));display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none}
+header .h{font-size:30px}
+header .h em{font-style:normal;display:inline-block;background:#000;color:#F4F1EA;padding:0 6px;transform:rotate(-3deg)}
+header .cnt{font-weight:700;font-size:13px;text-align:right;line-height:1.3}
+header .cnt b{font-family:'Archivo Black';font-size:22px;display:block}
+.world{position:relative;width:100%}
+.world svg{position:absolute;left:0;top:0;overflow:visible}
+.stem-grow{transition:stroke-dashoffset 1.4s cubic-bezier(.5,0,.2,1)}
+.st{position:absolute;transform:translate(-50%,-50%);border:0;background:none;padding:0}
+.st.open{width:92px;height:92px;border-radius:50%;border:4px solid #000;overflow:hidden;box-shadow:6px 6px 0 var(--c);background:#fff;transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+.st.open img{width:100%;height:100%;object-fit:cover;display:block}
+.st.open.bloom{animation:bloom .8s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes bloom{0%{transform:translate(-50%,-50%) scale(.1) rotate(-40deg)}100%{transform:translate(-50%,-50%) scale(1)}}
+.tag{position:absolute;transform:translate(-50%,0);font-weight:700;font-size:12px;background:#fff;border:2px solid #000;padding:2px 7px;white-space:nowrap}
+.tag b{font-family:'Archivo Black';margin-right:4px}
+.bud{width:46px;height:62px}
+.bud svg{position:static;width:100%;height:100%;overflow:visible}
+.bud.next svg{animation:sway 2.4s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes sway{50%{transform:rotate(7deg) scale(1.08)}}
+.bud.locked{width:26px;height:36px;opacity:.5}
+.shoot{position:absolute;pointer-events:none;transform-origin:var(--ox) 50%;animation:grow 1s .9s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes grow{from{transform:scale(0) rotate(var(--r))}to{transform:scale(1) rotate(var(--r))}}
+.act{position:absolute;font-family:'Archivo Black';font-size:13px;text-transform:uppercase;letter-spacing:.04em;writing-mode:vertical-rl;transform:rotate(180deg);opacity:.35}
+.ground{position:absolute;left:0;right:0;padding:0 28px;text-align:center}
+.ground p{font-size:15px;line-height:1.5;max-width:330px;margin:14px auto 0}
+.ground .h{font-size:14px;letter-spacing:.12em}
+.fog{position:absolute;left:0;right:0;height:240px;background:linear-gradient(#F4F1EA 30%,rgba(244,241,234,0));pointer-events:none}
+</style>
+</head>
+<body>
+<header><div class="h">Die <em>Ranke</em></div><div class="cnt"><b id="cnt"></b>Blüten offen</div></header>
+<main class="world" id="world"></main>
+<script src="../content.js?v=223"></script>
+<script src="proto.js"></script>
+<script>
+const W=Math.min(innerWidth,480),GAP=170,BOT=330,H=BOT+GAP*N+260;
+const sx=y=>W/2+Math.sin(y/150)*W*.17+Math.sin(y/61)*6;
+const yOf=i=>H-BOT-i*GAP;
+let firstGrow=true;
+function stemD(y0,y1){let d='';for(let y=y0;y>=y1;y-=5)d+=(d?'L':'M')+sx(y).toFixed(1)+' '+y;return d}
+function render(newBloom){
+  const w=$('#world');w.style.height=H+'px';
+  const yTip=yOf(U)+40;
+  let svg='<svg width="'+W+'" height="'+H+'" aria-hidden="true">';
+  // zukünftige Ranke: fein gestrichelt, wie Bleistift-Vorzeichnung
+  svg+='<path d="'+stemD(H-150,150)+'" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round" opacity=".5"/>';
+  // gewachsene Ranke
+  svg+='<path id="grow" class="stem-grow" d="'+stemD(H-150,yTip)+'" fill="none" stroke="#000" stroke-width="11" stroke-linecap="round"/>';
+  // Zweige zu den Stationen
+  for(let i=0;i<N;i++){const y=yOf(i),side=i%2?1:-1,x0=sx(y+28),x1=W/2+side*W*.3;
+    svg+='<path d="M'+x0+' '+(y+28)+'Q'+((x0+x1)/2)+' '+(y+40)+' '+x1+' '+y+'" fill="none" stroke="#000" stroke-width="'+(i<U?5:i===U?3:2)+'" stroke-linecap="round"'+(i>U?' stroke-dasharray="2 7" opacity=".5"':'')+'/>';}
+  svg+='</svg>';
+  let h=svg;
+  // Startboden mit Prolog
+  h+='<div class="ground" style="top:'+(H-140)+'px"><div class="h">Hier beginnt die Geschichte</div><p>'+PROLOG.split('. ').slice(-2).join('. ')+'</p></div>';
+  // Akt-Beschriftung am Rand
+  C.journey.acts.forEach(a=>{if(a.from<=N)h+='<div class="act" style="top:'+(yOf(a.from-1)-60)+'px;'+(a.from%2?'right':'left')+':10px">'+a.title.de+'</div>'});
+  for(let i=0;i<N;i++){const y=yOf(i),side=i%2?1:-1,x=W/2+side*W*.3;
+    if(i<U){h+='<button class="st open'+(newBloom===i?' bloom':'')+'" data-i="'+i+'" style="left:'+x+'px;top:'+y+'px;--c:'+col(i)+'" aria-label="'+T(i)+'"><img src="'+IM(i)+'" alt=""></button>';
+      h+='<div class="tag" style="left:'+x+'px;top:'+(y+54)+'px"><b>'+(i+1)+'</b>'+T(i)+'</div>';
+      // Seitentrieb aus den Zeichnungen, gegenüber der Blüte
+      const d=DEKO[i%DEKO.length],ys=y+GAP/2,xs=sx(ys),sz=112;
+      h+='<img class="shoot" src="'+d+'" alt="" style="width:'+sz+'px;left:'+(side>0?xs-sz:xs)+'px;top:'+(ys-sz/2)+'px;--ox:'+(side>0?'100%':'0')+';--r:'+(side>0?'-12deg':'12deg')+'">';}
+    else{const nx=i===U;h+='<button class="st bud '+(nx?'next':'locked')+'" data-i="'+i+'" style="left:'+x+'px;top:'+y+'px" aria-label="Station '+(i+1)+'"><svg viewBox="0 0 46 62"><path d="M23 60C8 48 2 34 8 20 12 10 18 4 23 2c5 2 11 8 15 18 6 14 0 28-15 40z" fill="'+(nx?'#FF2E88':'#fff')+'" stroke="#000" stroke-width="3.5"/><path d="M23 58C17 44 17 22 23 6" fill="none" stroke="#000" stroke-width="2.5"/></svg></button>';
+      if(nx)h+='<div class="tag" style="left:'+x+'px;top:'+(y+40)+'px;background:#FF2E88;color:#fff"><b>'+(i+1)+'</b>Knospe</div>';}}
+  h+='<div class="fog" style="top:0"></div>';
+  w.innerHTML=h;
+  $('#cnt').textContent=U+' / '+N;
+  w.querySelectorAll('.st').forEach(b=>b.onclick=()=>sheet(+b.dataset.i));
+  // Wachstum animieren
+  const g=$('#grow'),L=g.getTotalLength();g.style.strokeDasharray=L;
+  const from=firstGrow?L:Math.min(L,GAP+40);g.style.transition='none';g.style.strokeDashoffset=from;g.getBoundingClientRect();
+  g.style.transition='';g.style.strokeDashoffset=0;firstGrow=false;
+}
+function centerOn(i,smooth){scrollTo({top:yOf(i)-innerHeight*.5,behavior:smooth?'smooth':'auto'})}
+window.onProgress=d=>{render(d>0?U-1:null);centerOn(U,true)};
+chrome(0);render();centerOn(U);
+</script>
+</body>
+</html>

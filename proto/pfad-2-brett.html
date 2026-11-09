@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FFE600">
+<title>Pfad-Entwurf 2 · Spielbrett</title>
+<link rel="stylesheet" href="proto.css">
+<style>
+/* Idee: Alles auf einen Blick, wie ein Brettspiel. Kein Scrollen.
+   Alle 24 Felder sind sichtbar, der Klecks ist die Spielfigur und hüpft weiter. */
+body{background:#FFE600;height:100%;overflow:hidden}
+.wrap{height:100svh;display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top)) 18px calc(78px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top .h{font-size:28px}
+.top .h span{display:inline-block;background:#000;color:#FFE600;padding:0 6px;transform:rotate(-3deg)}
+.chip{font-family:'Archivo Black';font-size:12px;text-transform:uppercase;background:#000;color:#FFE600;border-radius:999px;padding:7px 12px;white-space:nowrap}
+.acts{display:flex;gap:6px;margin:14px 0 4px}
+.acts i{flex:1;height:10px;border:2.5px solid #000;background:#fff;position:relative;font-style:normal}
+.acts i.on{background:var(--a)}
+.acts i b{position:absolute;top:13px;left:0;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.board{flex:1;position:relative;margin-top:22px;min-height:0}
+.board svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.f{position:absolute;transform:translate(-50%,-50%) rotate(var(--r));border:3.5px solid #000;background:#fff;box-shadow:5px 5px 0 #000;padding:0;display:grid;place-items:center;font-family:'Archivo Black';overflow:visible}
+.f img{width:100%;height:100%;object-fit:cover;display:block}
+.f.open{box-shadow:5px 5px 0 var(--c)}
+.f.next{background:#FF2E88;color:#fff;font-size:26px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:translate(-50%,-50%) rotate(var(--r)) scale(1.08)}}
+.f.lock{background:repeating-linear-gradient(45deg,#fff 0 6px,#000 6px 8px);box-shadow:4px 4px 0 #000}
+.f.soon{background:transparent;border:2.5px dashed #000;box-shadow:none;font-size:11px;opacity:.55}
+.f .n{position:absolute;left:-4px;top:-4px;background:#000;color:#FFE600;font-size:11px;line-height:1;padding:3px 5px}
+.f .flag{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) rotate(-4deg);background:#000;color:#fff;font-size:10px;letter-spacing:.06em;padding:3px 7px;white-space:nowrap}
+.pawn{position:absolute;width:46px;height:46px;z-index:5;pointer-events:none;transition:left .55s cubic-bezier(.4,0,.2,1),top .55s cubic-bezier(.4,0,.2,1)}
+.pawn svg{width:100%;height:100%;display:block;filter:drop-shadow(3px 3px 0 #000)}
+.pawn.hop svg{animation:hop .55s ease-in-out}
+@keyframes hop{40%{transform:translateY(-34px) rotate(-10deg) scale(1.1,.9)}75%{transform:translateY(0) scale(1.2,.8)}}
+.info{font-weight:700;font-size:14px;text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="h">Spiel<span>brett</span></div><div class="chip" id="chip"></div></div>
+  <div class="acts" id="acts"></div>
+  <div class="board" id="board"></div>
+  <p class="info" id="info"></p>
+</div>
+<script src="../content.js?v=223"></script>
+<script src="proto.js"></script>
+<script>
+const TOTAL=24,COLS=4,ROWS=6,NEED=[2,3,3,4,4,5,5,6];
+const ACOL=['#FF2E88','#2D7BFF','#14B86A','#FF8A00'];
+let pos=[];
+function layout(){const b=$('#board'),w=b.clientWidth,h=b.clientHeight;
+  const fs=Math.min(64,(w-30)/COLS-26,(h-10)/ROWS-24);pos=[];
+  for(let k=0;k<TOTAL;k++){const r=Math.floor(k/COLS),c=r%2?COLS-1-(k%COLS):k%COLS;
+    pos.push([fs/2+8+c*(w-fs-16)/(COLS-1),fs/2+10+r*(h-fs-20)/(ROWS-1)])}
+  return fs}
+function render(hop){
+  const b=$('#board'),fs=layout();let s='<svg aria-hidden="true">';
+  // Verbindungen mit Siegen dazwischen (kleine Rauten = Runden bis zum nächsten Bild)
+  for(let k=1;k<TOTAL;k++){const [x0,y0]=pos[k-1],[x1,y1]=pos[k],done=k<U,cur=k===U,real=k<N;
+    s+='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y1+'" stroke="#000" stroke-width="'+(done?8:real?4:2.5)+'" '+(real?'':'stroke-dasharray="2 7" ')+'stroke-linecap="round"/>';
+    if(real&&(done||cur)){const n=NEED[Math.min(k-1,NEED.length-1)],filled=done?n:Math.min(n-1,2);
+      for(let j=0;j<n;j++){const t=(j+1)/(n+1),x=x0+(x1-x0)*t,y=y0+(y1-y0)*t;
+        s+='<rect x="'+(x-5)+'" y="'+(y-5)+'" width="10" height="10" transform="rotate(45 '+x+' '+y+')" fill="'+(j<filled?'#FF2E88':'#fff')+'" stroke="#000" stroke-width="2.5"/>'}}}
+  s+='</svg>';
+  for(let k=0;k<TOTAL;k++){const [x,y]=pos[k],r=((k*37)%7-3)+'deg',st='left:'+x+'px;top:'+y+'px;width:'+fs+'px;height:'+fs+'px;--r:'+r;
+    if(k<U)s+='<button class="f open" data-i="'+k+'" style="'+st+';--c:'+col(k)+'" aria-label="'+T(k)+'"><img src="'+IM(k)+'" alt=""><span class="n">'+(k+1)+'</span></button>';
+    else if(k===U&&k<N)s+='<button class="f next" data-i="'+k+'" style="'+st+'">?<span class="flag">PRÜFUNG</span><span class="n">'+(k+1)+'</span></button>';
+    else if(k<N)s+='<button class="f lock" data-i="'+k+'" style="'+st+'" aria-label="Station '+(k+1)+'"><span class="n">'+(k+1)+'</span></button>';
+    else s+='<div class="f soon" style="'+st+'">BALD</div>'}
+  const pk=Math.min(U-1,N-1);
+  s+='<div class="pawn" id="pawn" style="left:'+(pos[hop?pk-1:pk][0]-23)+'px;top:'+(pos[hop?pk-1:pk][1]-fs/2-40)+'px"><svg viewBox="0 0 46 46"><path d="M23 4c9 0 12 6 17 9s5 13 1 18-7 11-16 11S8 40 5 34 1 20 6 14 14 4 23 4z" fill="#FF2E88" stroke="#000" stroke-width="3"/><circle cx="17" cy="21" r="4.5" fill="#fff" stroke="#000" stroke-width="2.5"/><circle cx="29" cy="21" r="4.5" fill="#fff" stroke="#000" stroke-width="2.5"/><circle cx="18" cy="22" r="1.8"/><circle cx="30" cy="22" r="1.8"/><path d="M18 31q5 4 10 0" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"/></svg></div>';
+  b.innerHTML=s;
+  b.querySelectorAll('button.f').forEach(x=>x.onclick=()=>sheet(+x.dataset.i));
+  if(hop)requestAnimationFrame(()=>requestAnimationFrame(()=>{const p=$('#pawn');p.classList.add('hop');p.style.left=(pos[pk][0]-23)+'px';p.style.top=(pos[pk][1]-fs/2-40)+'px'}));
+  // Akte als Fortschrittsbalken
+  $('#acts').innerHTML=C.journey.acts.map((a,i)=>'<i class="'+(U>=a.from?'on':'')+'" style="--a:'+ACOL[i]+'"><b>'+(U>=a.from?a.title.de.split('·')[1]:'Akt '+['I','II','III','IV'][i])+'</b></i>').join('');
+  $('#chip').textContent=U+' / '+TOTAL+' Felder';
+  $('#info').textContent=U<N?'Nächstes Feld: Prüfung für Bild '+(U+1):'Alle Bilder dieses Kapitels gefunden';
+}
+window.onProgress=d=>render(d>0);
+addEventListener('resize',()=>render());
+chrome(1);render();
+</script>
+</body>
+</html>

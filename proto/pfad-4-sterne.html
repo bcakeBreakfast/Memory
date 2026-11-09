@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B0B12">
+<title>Pfad-Entwurf 4 · Sternbild</title>
+<link rel="stylesheet" href="proto.css">
+<style>
+/* Idee: Jeder Akt ist ein Sternbild. Die Bilder sind Sterne, die Zeichnungen
+   sind die Figuren dahinter. Ist ein Akt geschafft, leuchtet seine Figur auf. */
+body{background:#0B0B12;color:#fff;height:100%;overflow:hidden}
+.wrap{height:100svh;display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top)) 18px calc(78px + env(safe-area-inset-bottom))}
+.top .h{font-size:30px;color:#fff}
+.top p{font-size:14px;opacity:.7;margin-top:4px;font-weight:700}
+.sky{flex:1;position:relative;margin-top:8px;min-height:0}
+.sky svg.lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.dust{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.15}}
+.fig{position:absolute;filter:invert(1);opacity:.1;transition:opacity 1.2s;pointer-events:none}
+.fig.lit{opacity:.5;filter:invert(1) drop-shadow(0 0 8px rgba(0,0,0,.9))}
+.zone{position:absolute;font-family:'Archivo Black';font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.45}
+.zone.lit{opacity:1;color:#FFE600}
+.s{position:absolute;transform:translate(-50%,-50%);border:0;padding:0;background:none}
+.s.open{width:50px;height:50px;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 0 0 3px var(--c),0 0 24px 6px var(--c)}
+.s.open img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1) contrast(1.1)}
+.s.open.new{animation:ignite 1s cubic-bezier(.2,1.6,.4,1) .5s both}
+@keyframes ignite{from{transform:translate(-50%,-50%) scale(0);box-shadow:0 0 0 3px var(--c),0 0 80px 40px #fff}}
+.s.next{width:44px;height:44px;animation:spin 6s linear infinite}
+.s.next svg,.s.lock svg{width:100%;height:100%;display:block;overflow:visible}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.s.lock{width:16px;height:16px;animation:tw 2.6s ease-in-out infinite}
+.lbl{position:absolute;transform:translate(-50%,0);font-size:11px;font-weight:700;white-space:nowrap;opacity:.85;pointer-events:none}
+.comet{position:absolute;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 16px 6px #fff;z-index:4;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="h">Sternbild</div><p id="sub"></p></div>
+  <div class="sky" id="sky"></div>
+</div>
+<script src="../content.js?v=223"></script>
+<script src="proto.js"></script>
+<script>
+/* Sternpositionen je Akt (Anteil der Fläche). Akt I unten, Akt II oben. */
+const ZONES=[{from:0,to:6,y0:.52,y1:1,fig:0,pts:[[.14,.80],[.34,.66],[.24,.36],[.52,.22],[.78,.40],[.64,.74]]},
+             {from:6,to:10,y0:0,y1:.46,fig:4,pts:[[.20,.76],[.42,.50],[.68,.24],[.84,.64]]}];
+let P=[],prevU=U;
+function place(){const sky=$('#sky'),w=sky.clientWidth,h=sky.clientHeight;P=[];
+  ZONES.forEach(z=>z.pts.forEach(p=>P.push([p[0]*w,(z.y0+p[1]*(z.y1-z.y0))*h])));return [w,h]}
+function render(isNew){
+  const sky=$('#sky'),[w,h]=place();let s='';
+  // Sternenstaub
+  let seed=3;const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  for(let k=0;k<70;k++)s+='<i class="dust" style="left:'+(rnd()*w)+'px;top:'+(rnd()*h)+'px;opacity:'+(.2+rnd()*.6)+';animation-delay:'+(rnd()*3)+'s"></i>';
+  // Figuren aus den Zeichnungen hinter jedem Akt
+  ZONES.forEach((z,k)=>{const done=U>=z.to,zh=(z.y1-z.y0)*h,sz=Math.min(w*.95,zh*1.05);
+    s+='<img class="fig'+(done?' lit':'')+'" src="'+DEKO[z.fig]+'" alt="" style="width:'+sz+'px;height:'+sz+'px;object-fit:contain;left:'+((w-sz)/2)+'px;top:'+(z.y0*h+(zh-sz)/2)+'px">';
+    s+='<div class="zone'+(done?' lit':'')+'" style="left:0;top:'+(z.y0*h+(k?0:6))+'px">'+C.journey.acts[k].title.de+(done?' ✦':'')+'</div>'});
+  // Linien
+  s+='<svg class="lines" aria-hidden="true">';
+  for(let i=1;i<N;i++){const [x0,y0]=P[i-1],[x1,y1]=P[i],done=i<U;
+    s+='<line x1="'+x0+'" y1="'+y0+'" x2="'+x1+'" y2="'+y1+'" stroke="#fff" stroke-width="'+(done?2.5:1.2)+'" '+(done?'style="filter:drop-shadow(0 0 4px #fff)"':'stroke-dasharray="2 6" opacity=".45"')+' stroke-linecap="round"/>'}
+  s+='</svg>';
+  // Sterne
+  const STAR='<svg viewBox="-22 -22 44 44"><path d="M0-21L5-5 21 0 5 5 0 21-5 5-21 0-5-5z" fill="#FF2E88" stroke="#fff" stroke-width="2.5"/></svg>';
+  const TWINK='<svg viewBox="-8 -8 16 16"><path d="M0-8L2-2 8 0 2 2 0 8-2 2-8 0-2-2z" fill="#fff"/></svg>';
+  for(let i=0;i<N;i++){const [x,y]=P[i];
+    if(i<U){s+='<button class="s open'+(isNew&&i===U-1?' new':'')+'" data-i="'+i+'" style="left:'+x+'px;top:'+y+'px;--c:'+col(i)+'" aria-label="'+T(i)+'"><img src="'+IM(i)+'" alt=""></button><div class="lbl" style="left:'+x+'px;top:'+(y+31)+'px">'+T(i)+'</div>'}
+    else if(i===U)s+='<button class="s next" data-i="'+i+'" style="left:'+x+'px;top:'+y+'px" aria-label="Nächster Stern">'+STAR+'</button><div class="lbl" style="left:'+x+'px;top:'+(y+28)+'px;color:#FF2E88">Prüfung</div>';
+    else s+='<button class="s lock" data-i="'+i+'" style="left:'+x+'px;top:'+y+'px;animation-delay:'+(i*.3)+'s" aria-label="Station '+(i+1)+'">'+TWINK+'</button>'}
+  sky.innerHTML=s;
+  sky.querySelectorAll('.s').forEach(b=>b.onclick=()=>sheet(+b.dataset.i));
+  const z=ZONES.find(z=>U-1<z.to)||ZONES[1];
+  $('#sub').textContent=U+' von '+N+' Sternen leuchten · '+C.journey.acts[ZONES.indexOf(z)].title.de;
+  // Sternschnuppe vom letzten zum neuen Stern
+  if(isNew&&U>1){const c=document.createElement('div');c.className='comet';sky.append(c);
+    c.animate([{left:P[U-2][0]-5+'px',top:P[U-2][1]-5+'px'},{left:P[U-1][0]-5+'px',top:P[U-1][1]-5+'px',opacity:0}],{duration:600,easing:'ease-in'}).onfinish=()=>c.remove()}
+}
+window.onProgress=d=>render(d>0);
+addEventListener('resize',()=>render());
+chrome(3,true);render();
+</script>
+</body>
+</html>
