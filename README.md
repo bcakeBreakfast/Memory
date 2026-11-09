@@ -37,5 +37,8 @@ Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischal
 - `i18n.js`: alle Oberflächentexte Deutsch/Englisch
 - `sw.js`: Offline-Cache. Bei jeder neuen Version die Zahl in `CACHE` und `VERSION` (in index.html) erhöhen.
 - `manifest.webmanifest`, `icons/`: Name, Farben, App-Icons
-- `img/`: t1–t6 nachgezeichnete Tuschekacheln, t7–t10 neu gezeichnet im selben Stil (SVG)
+- `img/`: die Zeichnungen als WebP in 900 px (bewusst nur in Bildschirmgröße; die Vektor-Originale liegen nicht im Repo)
 - `fonts/`: Archivo Black, Space Grotesk (SIL Open Font License)
+
+## Rechte
+Zeichnungen, Gestaltung und Code: alle Rechte vorbehalten, siehe `LICENSE`. Schriften: SIL Open Font License.

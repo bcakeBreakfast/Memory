@@ -12,7 +12,7 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 210; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 211; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
@@ -20,6 +20,16 @@ window.CONTENT = {
     text: {
       de: "[Wie Memo Punch entstanden ist: eine Zusammenarbeit aus Zeichnung und Gestaltung. Hier steht euer gemeinsamer Text.]",
       en: "[How Memo Punch came about: a collaboration between drawing and design. Your shared text goes here.]"
+    }
+  },
+
+  // Copyright: erscheint auf der Projektseite, unter jedem Bild und in den Optionen.
+  // Die Namen kommen automatisch aus "people" (erste Person = Zeichnungen).
+  copyright: {
+    year: "2026",
+    note: {
+      de: "Alle Rechte vorbehalten. Die Zeichnungen dürfen ohne schriftliche Erlaubnis nicht kopiert, vervielfältigt oder weiterverwendet werden.",
+      en: "All rights reserved. The drawings may not be copied, reproduced or reused without written permission."
     }
   },
 

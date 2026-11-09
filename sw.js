@@ -2,10 +2,10 @@
    - Netz zuerst: neue Versionen und Texte kommen sofort an
    - Fällt das Netz aus, kommt alles aus dem Speicher (offline spielbar)
    - Neue Versionen übernehmen sofort (skipWaiting), die Seite lädt sich selbst neu */
-const CACHE = 'memo-punch-2.1.0';
+const CACHE = 'memo-punch-2.1.1';
 const ASSETS = [
   './', './index.html', './i18n.js', './content.js', './manifest.webmanifest',
-  './img/t1.svg', './img/t2.svg', './img/t3.svg', './img/t4.svg', './img/t5.svg', './img/t6.svg', './img/t7.svg', './img/t8.svg', './img/t9.svg', './img/t10.svg',
+  './img/t1.webp', './img/t2.webp', './img/t3.webp', './img/t4.webp', './img/t5.webp', './img/t6.webp', './img/t7.webp', './img/t8.webp', './img/t9.webp', './img/t10.webp',
   './fonts/archivo-black.woff2', './fonts/space-grotesk-500.woff2', './fonts/space-grotesk-700.woff2',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'
 ];

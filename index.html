@@ -43,7 +43,9 @@ html.big-text{font-size:112.5%}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--y);transition:background .3s;color:var(--k);font-family:'Space Grotesk',system-ui,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
 button{font:inherit;color:inherit;cursor:pointer}
-img{-webkit-user-drag:none}
+img{-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
+.copy{font-size:var(--t-xs);font-weight:500;line-height:1.5;opacity:.85}
+#o-detail .copy{color:var(--w);margin-top:calc(-1 * var(--s2))}
 :focus-visible{outline:var(--bw) dashed var(--k);outline-offset:var(--s1)}
 .dark :focus-visible,#o-detail :focus-visible{outline-color:var(--y)}
 [hidden]{display:none!important}
@@ -409,8 +411,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=210"></script>
-<script src="content.js?v=210"></script>
+<script src="i18n.js?v=211"></script>
+<script src="content.js?v=211"></script>
 </head>
 <body>
 <div id="app">
@@ -545,6 +547,7 @@ body.calm .fx,body.calm .flash{display:none}
 <div class="ov" id="o-detail" role="dialog">
   <div class="top"><span class="pill" style="background:var(--y);color:var(--k)" id="dNo"></span><button class="sq" id="dClose" data-ta="close"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3.5"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="stage"><img id="dImg" alt=""></div>
+  <p class="copy" id="dCopy"></p>
   <h2 class="h" id="dTitle" data-fit></h2>
   <div class="dstep" id="dStepBox"><span class="lbl" id="dStepLbl"></span><p class="txt" id="dStep"></p></div>
   <p class="txt" id="dStory"></p>
@@ -560,6 +563,7 @@ body.calm .fx,body.calm .flash{display:none}
   <p class="txt" id="aText" style="white-space:pre-line"></p>
   <div class="people" id="aPeople"></div>
   <div class="astrip" id="aStrip" aria-hidden="true"></div>
+  <p class="copy" id="aCopy"></p>
 </div>
 
 <!-- BESTÄTIGEN -->
@@ -615,7 +619,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
-const BUILD=210;
+const BUILD=211;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -623,8 +627,8 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.1.0';
-const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.svg?v=200');
+const VERSION='2.1.1';
+const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
 const ACC={4:'#2D7BFF',5:'#FF6A00',6:'#8A3FFC',7:'#00A88F',8:'#E8212E',9:'#2D7BFF'};
@@ -671,7 +675,7 @@ function applyLang(){
   document.documentElement.style.setProperty('--pairtxt','"'+t('pair')+'"');
   $$('[data-lang]').forEach(b=>b.setAttribute('aria-checked',b.dataset.lang===L));
   $('#ver').textContent='Memo Punch · '+t('version',{v:VERSION});
-  $('#footArtist').textContent=credits();
+  $('#footArtist').innerHTML=esc(credits())+'<br>'+esc(copyLine());
   $('#artistShort').textContent=PEOPLE().map(p=>p.name).join(' × ');
 }
 
@@ -818,6 +822,7 @@ function openDetail(i){
   ti.textContent=imgTitle(i);ti.classList.toggle('ph',isPh(ti.textContent));
   stry.textContent=s;stry.hidden=!s;stry.classList.toggle('ph',isPh(s));
   const stp=stepText(i),a=actFor(i);$('#dStepBox').hidden=!stp;$('#dStep').textContent=stp;$('#dStepLbl').textContent=t('stationN',{n:i+1})+(a?' · '+loc(a.title):'');
+  $('#dCopy').textContent=drawCopy();
   $('#dAt').textContent=t('roundN',{n:S.at[i]||1});$('#dFound').textContent=(S.found[i]||0)+'×';
   $('#o-detail').setAttribute('aria-label',imgTitle(i));$('#o-detail').scrollTop=0;
   if(!$('#o-detail').classList.contains('on'))openOv('o-detail');else fitSoon();
@@ -826,6 +831,8 @@ $('#dClose').addEventListener('click',()=>{SFX.tap();closeOv('o-detail')});
 $('#dPrev').addEventListener('click',()=>{SFX.flip();openDetail((detailIdx-1+S.unlocked)%S.unlocked)});
 $('#dNext').addEventListener('click',()=>{SFX.flip();openDetail((detailIdx+1)%S.unlocked)});
 const PEOPLE=()=>(C.people&&C.people.length)?C.people:(C.artist?[C.artist]:[]);
+function copyLine(){const cp=C.copyright||{},P=PEOPLE();return '© '+(cp.year||new Date().getFullYear())+' '+P.map(p=>p.name).join(' · ')}
+function drawCopy(){const cp=C.copyright||{},P=PEOPLE();return '© '+(cp.year||new Date().getFullYear())+' '+((P[0]||{}).name||'')}
 function credits(){return PEOPLE().map(p=>loc(p.role)+': '+(p.name||'')).join(' · ')}
 function openArtist(){
   const P=PEOPLE(),pr=C.project||{};
@@ -836,6 +843,7 @@ function openArtist(){
     return '<div class="box person"><span class="lbl">'+esc(loc(p.role))+'</span><h3 class="h'+(isPh(p.name)?' ph':'')+'">'+esc(p.name||'')+'</h3>'+
       (bio?'<p class="txt'+(isPh(bio)?' ph':'')+'">'+esc(bio)+'</p>':'')+
       (ln?'<a class="big w" href="'+esc(ln)+'" target="_blank" rel="noopener"><span>'+esc(ln.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))+'</span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M7 17 17 7M9 7h8v8"/></svg></a>':'')+'</div>'}).join('');
+  $('#aCopy').textContent=copyLine()+'. '+loc((C.copyright||{}).note);
   $('#aStrip').innerHTML=IMGS.slice(0,S.unlocked).map(s=>'<img src="'+s+'" alt="">').join('');
   $('#o-artist').scrollTop=0;openOv('o-artist');
 }
@@ -1230,6 +1238,7 @@ $('#sInstall').addEventListener('click',async()=>{SFX.tap();
   else openOv('o-ios')});
 $('#iosOk').addEventListener('click',()=>closeOv('o-ios'));
 
+document.addEventListener('contextmenu',e=>{if(e.target.tagName==='IMG')e.preventDefault()});
 /* ===== Start ===== */
 applyLang();applySet();sizeApp();
 const startTab=Object.keys(HASH).find(k=>HASH[k]===location.hash.slice(1))||'home';

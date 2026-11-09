@@ -1,5 +1,5 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 210;
+window.STR_BUILD = 211;
 window.STR = {
 de: {
   bossPlay: "Prüfung!", bossTag: "Prüfung", bossMsg: "Prüfung · Finde gleiche Kleckse",
