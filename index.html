@@ -379,16 +379,16 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .st:active{transform:rotate(var(--rot,0deg)) scale(.94)}
 .st.cur{width:84px;height:84px;margin:-42px 0 0 -42px;z-index:2;box-shadow:7px 7px 0 var(--sc,var(--k))}
 .st .num{position:absolute;left:-3px;top:-3px;background:var(--k);color:var(--y);font-family:'Archivo Black';font-size:var(--t-xs);padding:1px 6px;line-height:1.4}
-.st.next{background:var(--y);border-style:dashed;box-shadow:none;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:var(--t-xl)}
+.st.next{background:var(--w);border-style:solid;box-shadow:5px 5px 0 var(--k);display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:var(--t-xl)}
 .st.next.ready{background:var(--p);color:var(--onp);border-style:solid;box-shadow:5px 5px 0 var(--k);animation:ready 1.3s ease-in-out infinite}
 @keyframes ready{50%{transform:rotate(var(--rot,0deg)) scale(1.1)}}
-.st.lock{opacity:.35;border-style:dashed;background:transparent;box-shadow:none;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:var(--t-l)}
+.st.lock{opacity:1;border-style:solid;background:repeating-linear-gradient(45deg,var(--w) 0 5px,#000 5px 7px);color:transparent;box-shadow:4px 4px 0 var(--k);width:48px;height:48px;margin:-24px 0 0 -24px;display:flex;align-items:center;justify-content:center;font-family:'Archivo Black';font-size:var(--t-l)}
 .st .flag{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-10px) rotate(-5deg);white-space:nowrap;background:var(--k);color:var(--y);font-family:'Archivo Black';font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px}
 .act{position:absolute;transform:translateY(-50%);z-index:3;font-size:var(--t-xs)}
 .act.r{right:var(--s5)}.act.l{left:var(--s5)}
 .kav{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;z-index:4;animation:bob 2.2s ease-in-out infinite;pointer-events:none}
 @keyframes bob{50%{transform:translateY(-8px) rotate(6deg)}}
-.fogend{position:absolute;transform:translate(-50%,-50%);font-family:'Archivo Black';font-size:var(--t-s);text-transform:uppercase;letter-spacing:.04em;border:var(--bw) dashed var(--k);padding:var(--s2) var(--s3);white-space:nowrap;opacity:.6}
+.fogend{position:absolute;transform:translate(-50%,-50%) rotate(-3deg);font-family:'Archivo Black';font-size:var(--t-s);text-transform:uppercase;letter-spacing:.04em;background:var(--w);border:var(--bw) solid var(--k);box-shadow:4px 4px 0 var(--k);padding:var(--s2) var(--s3);white-space:nowrap}
 .status{display:flex;justify-content:space-between;align-items:center;gap:var(--s3);font-weight:700;font-size:var(--t-s);min-height:20px}
 #play.boss{background:var(--p);color:var(--onp);border-color:var(--k);box-shadow:var(--sh) var(--sh) 0 var(--k)}
 /* Bild-Detail: Station */
@@ -627,7 +627,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.1.1';
+const VERSION='2.1.2';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -773,14 +773,42 @@ function renderHome(){
     $('#hStatus').textContent=boss?t('bossReady',{n:S.unlocked+1}):(r-1===1?t('bossSoon1'):t('bossSoonN',{r:r-1}))}
   renderMap();
 }
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const INK='stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+/* Tusche-Ornamente im Stil der Zeichnungen */
+const DOODLES=[
+  (x,y,s,r)=>{let d='';for(let a=0;a<=6*Math.PI;a+=.25){const rr=s*.07*a;d+=(a?'L':'M')+(x+rr*Math.cos(a+r)).toFixed(1)+' '+(y+rr*Math.sin(a+r)).toFixed(1)}return '<path d="'+d+'" fill="none" '+INK+'/>'},
+  (x,y,s,r)=>{let h='';for(let k=0;k<8;k++){const a=r+Math.PI*(.15+k*.1),R=s*.48;h+='<circle cx="'+(x+R*Math.cos(a)).toFixed(1)+'" cy="'+(y+R*Math.sin(a)).toFixed(1)+'" r="'+(s*.07).toFixed(1)+'" fill="#fff" '+INK+'/>'}return h},
+  (x,y,s,r)=>{const g='<g transform="translate('+x+' '+y+') rotate('+(r*57).toFixed(0)+') translate('+(-s/2)+' 0)">';
+    return g+'<path d="M0 0C'+s*.3+' '+(-s*.38)+' '+s*.8+' '+(-s*.3)+' '+s+' 0C'+s*.8+' '+s*.3+' '+s*.3+' '+s*.38+' 0 0Z" fill="#000" '+INK+'/><path d="M'+s*.08+' 0C'+s*.4+' '+(-s*.08)+' '+s*.7+' '+(-s*.06)+' '+s*.92+' 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>'},
+  (x,y,s,r)=>{let h='';for(let k=0;k<6;k++){const a=r+k*Math.PI/3;h+='<ellipse cx="'+(x+s*.26*Math.cos(a)).toFixed(1)+'" cy="'+(y+s*.26*Math.sin(a)).toFixed(1)+'" rx="'+(s*.2)+'" ry="'+(s*.11)+'" transform="rotate('+(a*57.3).toFixed(0)+' '+(x+s*.26*Math.cos(a)).toFixed(1)+' '+(y+s*.26*Math.sin(a)).toFixed(1)+')" fill="#fff" '+INK+'/>'}
+    return h+'<circle cx="'+x+'" cy="'+y+'" r="'+(s*.12)+'" fill="#000" '+INK+'/><circle cx="'+(x-s*.04)+'" cy="'+(y-s*.03)+'" r="2" fill="#fff"/><circle cx="'+(x+s*.04)+'" cy="'+(y+s*.03)+'" r="2" fill="#fff"/>'},
+  (x,y,s,r,R)=>{let h='';for(let k=0;k<14;k++){const a=R()*Math.PI*2,d=R()*s*.5;h+='<circle cx="'+(x+d*Math.cos(a)).toFixed(1)+'" cy="'+(y+d*Math.sin(a)).toFixed(1)+'" r="'+(1.5+R()*3.5).toFixed(1)+'" fill="#000"/>'}return h},
+  (x,y,s,r)=>{const n=4,c=s/n;let h='<g transform="rotate('+(r*57).toFixed(0)+' '+x+' '+y+')">';for(let i=0;i<n;i++)for(let j=0;j<n;j++)h+='<rect x="'+(x-s/2+i*c)+'" y="'+(y-s/2+j*c)+'" width="'+c+'" height="'+c+'" fill="'+((i+j)%2?'#000':'#fff')+'"/>';
+    return h+'<rect x="'+(x-s/2)+'" y="'+(y-s/2)+'" width="'+s+'" height="'+s+'" fill="none" '+INK+'/></g>'},
+  (x,y,s,r)=>{let h='<g transform="rotate('+(r*57).toFixed(0)+' '+x+' '+y+')"><clipPath id="pb'+Math.round(x)+'_'+Math.round(y)+'"><ellipse cx="'+x+'" cy="'+y+'" rx="'+s*.5+'" ry="'+s*.3+'"/></clipPath><g clip-path="url(#pb'+Math.round(x)+'_'+Math.round(y)+')"><rect x="'+(x-s)+'" y="'+(y-s)+'" width="'+2*s+'" height="'+2*s+'" fill="#fff"/>';
+    for(let k=-3;k<=3;k++)h+='<rect x="'+(x+k*s*.16-s*.04)+'" y="'+(y-s)+'" width="'+s*.08+'" height="'+2*s+'" fill="#000"/>';
+    return h+'</g><ellipse cx="'+x+'" cy="'+y+'" rx="'+s*.5+'" ry="'+s*.3+'" fill="none" '+INK+'/></g>'}
+];
 function renderMap(){
-  const map=$('#map'),inn=$('#mapIn'),W=map.clientWidth||360,gap=118,top=90,bottom=90;
+  const map=$('#map'),inn=$('#mapIn'),W=map.clientWidth||360,gap=124,top=96,bottom=96;
   const more=!!(J().more);const N=ALL+(more?1:0),H=top+bottom+(N-1)*gap;
   inn.style.height=H+'px';mapPos=[];
-  for(let i=0;i<N;i++){const x=W*(0.5+0.27*Math.sin(i*1.25+0.4)),y=H-bottom-i*gap;mapPos.push([x,y])}
-  const P=mapPos;let d='M'+P[0][0]+' '+P[0][1];for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],my=(a[1]+b[1])/2;d+=' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]}
-  let seg='';for(let i=1;i<Math.min(S.unlocked,ALL);i++){const a=P[i-1],b=P[i],my=(a[1]+b[1])/2;seg+='<path d="M'+a[0]+' '+a[1]+' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]+'" stroke="'+stColor(i)+'" stroke-width="12" fill="none" stroke-linecap="round"/>'}
-  let h='<svg class="mapsvg" height="'+H+'" aria-hidden="true"><path d="'+d+'" stroke="var(--k)" stroke-width="4" stroke-dasharray="1 12" stroke-linecap="round" fill="none"/>'+seg+'</svg>';
+  for(let i=0;i<N;i++){const x=W*(0.5+0.26*Math.sin(i*1.25+0.4)),y=H-bottom-i*gap;mapPos.push([x,y])}
+  const P=mapPos,curve=(a,b)=>{const my=(a[1]+b[1])/2;return ' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]};
+  let d='M'+P[0][0]+' '+P[0][1];for(let i=1;i<P.length;i++)d+=curve(P[i-1],P[i]);
+  const tus=S.set.theme==='tusche';
+  /* Band: schwarze Kontur, weißer Grund, Tusche-Streifen; bereiste Strecke in Farbe */
+  let band='<path d="'+d+'" stroke="#000" stroke-width="28" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#fff" stroke-width="20" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#000" stroke-width="20" stroke-dasharray="5 9" fill="none"/>';
+  for(let i=1;i<Math.min(S.unlocked,ALL);i++){const sd='M'+P[i-1][0]+' '+P[i-1][1]+curve(P[i-1],P[i]);
+    band+='<path d="'+sd+'" stroke="#fff" stroke-width="20" fill="none"/><path d="'+sd+'" stroke="'+stColor(i)+'" stroke-width="20" stroke-dasharray="9 5" fill="none"/>'}
+  /* Ornamente in den freien Flächen */
+  let orn='';const R=rng(7);
+  for(let i=0;i<N-1;i++){const a=P[i],b=P[i+1],my=(a[1]+b[1])/2,mx=(a[0]+b[0])/2,side=mx<W/2?1:-1;
+    const ox=W/2+side*W*(0.3+R()*0.08),s=46+R()*26,type=Math.floor(R()*DOODLES.length);
+    orn+=DOODLES[type](ox,my+(R()-.5)*30,s,R()*6.28,R);
+    if(R()>.35){const t2=(type+1+Math.floor(R()*(DOODLES.length-1)))%DOODLES.length,oy=a[1]+(R()-.5)*20,ox2=a[0]<W/2?W*(0.82+R()*.06):W*(0.18-R()*.06);orn+=DOODLES[t2](ox2,oy,30+R()*18,R()*6.28,R)}}
+  let h='<svg class="mapsvg" height="'+H+'" width="'+W+'" aria-hidden="true"><defs><filter id="wob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#wob)">'+orn+band+'</g></svg>';
   const cur=Math.min(S.unlocked,ALL)-1,boss=bossNext();
   for(let i=0;i<ALL;i++){const [x,y]=P[i],rot=((i*37)%9-4)+'deg',a=actStarts(i)?actFor(i):null;
     if(a)h+='<span class="pill act '+(x>W/2?'l':'r')+'" style="top:'+y+'px">'+esc(loc(a.title))+'</span>';
@@ -789,7 +817,6 @@ function renderMap(){
     else h+='<span class="st lock" style="left:'+x+'px;top:'+y+'px;--rot:'+rot+'" aria-hidden="true">'+(i+1)+'</span>';
   }
   if(more){const [x,y]=P[ALL];h+='<span class="fogend" style="left:'+x+'px;top:'+y+'px">'+esc(loc(J().more))+'</span>'}
-  const [kx,ky]=P[Math.max(0,cur)];h+='<span class="kav" style="left:'+(kx+(kx>W/2?-58:58))+'px;top:'+(ky-30)+'px">'+blobSvg(S.set.theme==='tusche'?'#000':'var(--p)',0)+'</span>';
   inn.innerHTML=h;
   inn.querySelectorAll('[data-st]').forEach(b=>b.addEventListener('click',()=>{SFX.flip();openDetail(+b.dataset.st)}));
   inn.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{SFX.tap();b.animate([{transform:'rotate(0) scale(1)'},{transform:'rotate(-8deg) scale(1.12)'},{transform:'rotate(6deg) scale(1.06)'},{transform:'rotate(0) scale(1)'}],{duration:450})}));
