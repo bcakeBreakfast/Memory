@@ -1,5 +1,5 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 220;
+window.STR_BUILD = 221;
 window.STR = {
 de: {
   difficulty: "Schwierigkeit", modeEasy: "Anfänger", modePro: "Profi",

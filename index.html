@@ -454,8 +454,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=220"></script>
-<script src="content.js?v=220"></script>
+<script src="i18n.js?v=221"></script>
+<script src="content.js?v=221"></script>
 </head>
 <body>
 <div id="app">
@@ -672,7 +672,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
-const BUILD=220;
+const BUILD=221;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -680,7 +680,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.2.0';
+const VERSION='2.2.1';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -857,10 +857,14 @@ function renderMap(){
   const P=mapPos,curve=(a,b)=>{const my=(a[1]+b[1])/2;return ' C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]};
   let d='M'+P[0][0]+' '+P[0][1];for(let i=1;i<P.length;i++)d+=curve(P[i-1],P[i]);
   const tus=S.set.theme==='tusche';
-  /* Band: schwarze Kontur, weißer Grund, Tusche-Streifen; bereiste Strecke in Farbe */
-  let band='<path d="'+d+'" stroke="#000" stroke-width="28" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#fff" stroke-width="20" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#000" stroke-width="20" stroke-dasharray="5 9" fill="none"/>';
-  for(let i=1;i<Math.min(S.unlocked,ALL);i++){const sd='M'+P[i-1][0]+' '+P[i-1][1]+curve(P[i-1],P[i]);
-    band+='<path d="'+sd+'" stroke="#fff" stroke-width="20" fill="none"/><path d="'+sd+'" stroke="'+stColor(i)+'" stroke-width="20" stroke-dasharray="9 5" fill="none"/>'}
+  /* Pfad: Tuschepunkte in wechselnder Größe. Bis zur nächsten Station gefüllt, danach nur umrandet */
+  const RD=rng(31),bez=(a,b,t)=>{const my=(a[1]+b[1])/2,u=1-t;return [u*u*u*a[0]+3*u*u*t*a[0]+3*u*t*t*b[0]+t*t*t*b[0],u*u*u*a[1]+3*u*u*t*my+3*u*t*t*my+t*t*t*b[1]]};
+  let band='',k=0;
+  for(let i=1;i<P.length;i++){const a=P[i-1],b=P[i],done=i<=S.unlocked;let prev=a,acc=0,gp=12,r0=0;
+    for(let t=0;t<=1;t+=.004){const q=bez(a,b,t);acc+=Math.hypot(q[0]-prev[0],q[1]-prev[1]);prev=q;
+      if(acc<gp)continue;acc=0;if(Math.abs(q[1]-a[1])<34||Math.abs(q[1]-b[1])<34)continue;
+      const r=(2.8+4.6*(.5+.5*Math.sin(k*1.9))*(.65+RD()*.55)).toFixed(1);gp=7+r*1.5;const x=(q[0]+(RD()-.5)*3).toFixed(1),y=(q[1]+(RD()-.5)*3).toFixed(1);k++;
+      band+=done?'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#000"/>':'<circle cx="'+x+'" cy="'+y+'" r="'+Math.max(2.4,r*.8).toFixed(1)+'" fill="var(--w)" stroke="#000" stroke-width="2"/>'}}
   /* Ornamente: nie über Stationen (Mindestabstand), manche ragen über den Rand */
   const DK=((C.deko||{}).ornamente||[]).filter(Boolean),ORN=DK.length?DK.map(f=>(x,y,s,r)=>'<image href="'+esc(f)+'" x="'+(x-s/2).toFixed(1)+'" y="'+(y-s/2).toFixed(1)+'" width="'+s.toFixed(1)+'" height="'+s.toFixed(1)+'" transform="rotate('+(r*57).toFixed(0)+' '+x.toFixed(1)+' '+y.toFixed(1)+')"/>'):DOODLES;
   const R=rng(7),near=(x,y,r)=>P.slice(0,ALL).some(q=>Math.hypot(q[0]-x,q[1]-y)<r);
