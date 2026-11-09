@@ -422,6 +422,13 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .t-tusche .splat{background:#000}
 .slide.story.on .splat{animation:splat .5s var(--ease-pop) 1.3s forwards}
 @keyframes splat{to{opacity:.85;transform:scale(1) rotate(20deg)}}
+.lay-bg,.lay-orn{will-change:transform}
+.st.pop{animation:stpop .45s var(--ease-pop)}
+.st.next.ready.pop{animation:stpop .45s var(--ease-pop),ready 1.3s ease-in-out .45s infinite}
+@keyframes stpop{0%{transform:rotate(var(--rot,0deg)) scale(1)}45%{transform:rotate(var(--rot,0deg)) scale(1.06)}100%{transform:rotate(var(--rot,0deg)) scale(1)}}
+.rays{position:absolute;width:0;height:0;z-index:3;pointer-events:none}
+.rays i{position:absolute;left:0;top:0;width:12px;height:3px;background:var(--k);border-radius:2px;transform:rotate(var(--a)) translateX(30px);opacity:0;animation:ray .6s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes ray{0%{opacity:1;transform:rotate(var(--a)) translateX(30px) scaleX(.4)}60%{opacity:1}100%{opacity:0;transform:rotate(var(--a)) translateX(calc(30px + var(--d))) scaleX(1)}}
 body.calm *{animation-duration:.01s!important;transition-duration:.01s!important}
 body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
@@ -644,7 +651,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.1.3';
+const VERSION='2.1.4';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -819,13 +826,25 @@ function renderMap(){
   let band='<path d="'+d+'" stroke="#000" stroke-width="28" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#fff" stroke-width="20" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="#000" stroke-width="20" stroke-dasharray="5 9" fill="none"/>';
   for(let i=1;i<Math.min(S.unlocked,ALL);i++){const sd='M'+P[i-1][0]+' '+P[i-1][1]+curve(P[i-1],P[i]);
     band+='<path d="'+sd+'" stroke="#fff" stroke-width="20" fill="none"/><path d="'+sd+'" stroke="'+stColor(i)+'" stroke-width="20" stroke-dasharray="9 5" fill="none"/>'}
-  /* Ornamente in den freien Flächen */
-  let orn='';const R=rng(7);
+  /* Ornamente: nie über Stationen (Mindestabstand), manche ragen über den Rand */
+  const R=rng(7),near=(x,y,r)=>P.slice(0,ALL).some(q=>Math.hypot(q[0]-x,q[1]-y)<r);
+  let orn='',bg='';
   for(let i=0;i<N-1;i++){const a=P[i],b=P[i+1],my=(a[1]+b[1])/2,mx=(a[0]+b[0])/2,side=mx<W/2?1:-1;
-    const ox=W/2+side*W*(0.3+R()*0.08),s=46+R()*26,type=Math.floor(R()*DOODLES.length);
-    orn+=DOODLES[type](ox,my+(R()-.5)*30,s,R()*6.28,R);
-    if(R()>.35){const t2=(type+1+Math.floor(R()*(DOODLES.length-1)))%DOODLES.length,oy=a[1]+(R()-.5)*20,ox2=a[0]<W/2?W*(0.82+R()*.06):W*(0.18-R()*.06);orn+=DOODLES[t2](ox2,oy,30+R()*18,R()*6.28,R)}}
-  let h='<svg class="mapsvg" height="'+H+'" width="'+W+'" aria-hidden="true"><defs><filter id="wob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#wob)">'+orn+band+'</g></svg>';
+    const edge=R()<.35,ox=edge?(side>0?W-8+R()*14:8-R()*14):W/2+side*W*(0.3+R()*0.08),oy=my+(R()-.5)*30,sz=(edge?62:46)+R()*26,type=Math.floor(R()*DOODLES.length);
+    if(!near(ox,oy,78))orn+=DOODLES[type](ox,oy,sz,R()*6.28,R);
+    if(R()>.35){const t2=(type+1+Math.floor(R()*(DOODLES.length-1)))%DOODLES.length,oy2=a[1]+(R()-.5)*20,ox2=a[0]<W/2?W*(0.84+R()*.08):W*(0.16-R()*.08);
+      if(!near(ox2,oy2,70))orn+=DOODLES[t2](ox2,oy2,30+R()*18,R()*6.28,R)}}
+  /* Hintergrund: große, dezente Formen in einem dunkleren Ton des Grunds, angeschnitten */
+  const R2=rng(19),BGF=[
+    (x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="var(--y2)"/>',
+    (x,y,r)=>'<path d="'+BLOBS[0]+'" transform="translate('+(x-r)+' '+(y-r)+') scale('+(r/50)+')" fill="var(--y2)"/>',
+    (x,y,r)=>{let h='';for(let k=0;k<5;k++)h+='<rect x="'+(x-r)+'" y="'+(y-r+k*r*.42)+'" width="'+2*r+'" height="'+r*.2+'" fill="var(--y2)" transform="rotate(-18 '+x+' '+y+')"/>';return h},
+    (x,y,r)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="none" stroke="var(--y2)" stroke-width="'+r*.28+'"/>'];
+  for(let y=60;y<H+240;y+=170+R2()*90){const left=R2()<.5,x=left?-20+R2()*40:W+20-R2()*40;bg+=BGF[Math.floor(R2()*BGF.length)](x,y,70+R2()*70)}
+  const EXT=260;
+  let h='<svg class="mapsvg lay-bg" height="'+(H+EXT)+'" width="'+W+'" style="top:'+(-EXT)+'px" aria-hidden="true"><g transform="translate(0 '+EXT+')">'+bg+'</g></svg>'+
+    '<svg class="mapsvg lay-orn" height="'+(H+EXT)+'" width="'+W+'" style="top:'+(-EXT/2)+'px" aria-hidden="true"><defs><filter id="wob" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g transform="translate(0 '+(EXT/2)+')" filter="url(#wob)">'+orn+'</g></svg>'+
+    '<svg class="mapsvg" height="'+H+'" width="'+W+'" aria-hidden="true"><defs><filter id="wob2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#wob2)">'+band+'</g></svg>';
   const cur=Math.min(S.unlocked,ALL)-1,boss=bossNext();
   for(let i=0;i<ALL;i++){const [x,y]=P[i],rot=((i*37)%9-4)+'deg',a=actStarts(i)?actFor(i):null;
     if(a)h+='<span class="pill act '+(x>W/2?'l':'r')+'" style="top:'+y+'px">'+esc(loc(a.title))+'</span>';
@@ -837,8 +856,22 @@ function renderMap(){
   inn.innerHTML=h;
   inn.querySelectorAll('[data-st]').forEach(b=>b.addEventListener('click',()=>{SFX.flip();openDetail(+b.dataset.st)}));
   inn.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{SFX.tap();b.animate([{transform:'rotate(0) scale(1)'},{transform:'rotate(-8deg) scale(1.12)'},{transform:'rotate(6deg) scale(1.06)'},{transform:'rotate(0) scale(1)'}],{duration:450})}));
-  const focusY=P[Math.min(S.unlocked,ALL-1)][1];requestAnimationFrame(()=>{map.scrollTop=Math.max(0,focusY-map.clientHeight*0.55)});
+  const focusY=P[Math.min(S.unlocked,ALL-1)][1];requestAnimationFrame(()=>{map.scrollTop=Math.max(0,focusY-map.clientHeight*0.55);parallax()});
+  setupPop();
 }
+const calmMotion=()=>S.set.calm||matchMedia('(prefers-reduced-motion: reduce)').matches;
+let pxRaf=0;
+function parallax(){pxRaf=0;if(calmMotion())return;const map=$('#map'),st=map.scrollTop,bg=map.querySelector('.lay-bg'),orn=map.querySelector('.lay-orn');
+  if(bg)bg.style.transform='translate3d(0,'+(st*0.45).toFixed(1)+'px,0)';if(orn)orn.style.transform='translate3d(0,'+(st*0.18).toFixed(1)+'px,0)'}
+$('#map').addEventListener('scroll',()=>{if(!pxRaf)pxRaf=requestAnimationFrame(parallax)},{passive:true});
+let popObs=null;
+function setupPop(){if(popObs)popObs.disconnect();if(calmMotion()||!('IntersectionObserver' in window))return;
+  popObs=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting||e.target.dataset.popped)return;e.target.dataset.popped='1';pop(e.target)}),{root:$('#map'),rootMargin:'-38% 0px -38% 0px',threshold:0});
+  $$('#mapIn .st:not(.lock)').forEach(el=>popObs.observe(el))}
+function pop(el){el.classList.remove('pop');el.offsetWidth;el.classList.add('pop');
+  const b=document.createElement('span');b.className='rays';b.setAttribute('aria-hidden','true');
+  b.innerHTML=Array.from({length:9},(_,k)=>'<i style="--a:'+(k*40+Math.random()*14)+'deg;--d:'+(38+Math.random()*16)+'px"></i>').join('');
+  b.style.left=el.style.left;b.style.top=el.style.top;el.parentNode.appendChild(b);setTimeout(()=>b.remove(),700)}
 function zoomInto(cb){
   const inn=$('#mapIn'),map=$('#map');
   if(S.set.calm||matchMedia('(prefers-reduced-motion: reduce)').matches||!mapPos.length){cb();return}
