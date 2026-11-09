@@ -1,7 +1,12 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 207;
+window.STR_BUILD = 210;
 window.STR = {
 de: {
+  bossPlay: "Prüfung!", bossTag: "Prüfung", bossMsg: "Prüfung · Finde gleiche Kleckse",
+  bossReady: "Prüfung bereit: Bild {n} freispielen", bossSoon1: "Noch 1 Sieg bis zur Prüfung", bossSoonN: "Noch {r} Siege bis zur Prüfung",
+  stationN: "Station {n}", newAct: "Neuer Akt", mapAria: "Dein Weg", lockedStation: "Station {n}, noch gesperrt",
+  blobCard: "Karte {i} von {n}: Klecks {pos}", blobHidden: "Karte {i} von {n}, verdeckt",
+  posRow: ["oben", "Mitte", "unten"], posCol: ["links", "Mitte", "rechts"],
   toMenuS: "Menü", skipS: "Weiter", backS: "Zurück",
   diag: "Ton & Vibration testen", diagSub: "Finde heraus, was auf deinem Gerät geht",
   loudAlways: "Ton auch bei Lautlos", loudAlwaysSub: "Spielt trotz Lautlos-Schalter, pausiert aber deine Musik",
@@ -52,7 +57,7 @@ de: {
   howTo: "So geht's", skip: "Überspringen", next: "Weiter", letsGo: "Los geht’s!",
   i1t: "Gut<br>hinschauen!", i1p: "Am Anfang liegen alle Karten kurz offen. Der Balken zeigt, wie lange noch.",
   i2t: "Paare<br>finden!", i2p: "Deck zwei Karten auf. Gleiches Bild? Paar! Sonst drehen sie sich wieder um.",
-  i3t: "Bilder<br>sammeln!", i3p: "Gewinn Runden und schalte neue Bilder frei. Jedes Bild braucht ein paar Siege mehr. Zwischendurch warten Mini-Spiele.",
+  i3t: "Dem Klecks<br>folgen!", i3p: "Folge dem Klecks durch die Welt aus Tusche. Vor jedem neuen Bild wartet eine Prüfung: Finde die Karten mit dem gleichen Farbklecks.",
   newVersion: "Neue Version da!", reload: "Neu laden",
   iosTitle: "Auf den<br>Homebildschirm", ios1: "1. Unten in Safari auf <b>Teilen</b> tippen (Quadrat mit Pfeil nach oben).", ios2: "2. <b>Zum Home-Bildschirm</b> wählen und <b>Hinzufügen</b> tippen.", ios3: "Danach startet Memo Punch im Vollbild und läuft auch offline.", gotIt: "Alles klar",
   stages: [
@@ -74,6 +79,11 @@ de: {
   progressN: "{i} / {n}"
 },
 en: {
+  bossPlay: "Trial!", bossTag: "Trial", bossMsg: "Trial · Match the blots",
+  bossReady: "Trial ready: win image {n}", bossSoon1: "1 more win to the trial", bossSoonN: "{r} more wins to the trial",
+  stationN: "Station {n}", newAct: "New act", mapAria: "Your journey", lockedStation: "Station {n}, locked",
+  blobCard: "Card {i} of {n}: blot {pos}", blobHidden: "Card {i} of {n}, face down",
+  posRow: ["top", "middle", "bottom"], posCol: ["left", "centre", "right"],
   toMenuS: "Menu", skipS: "Skip", backS: "Back",
   diag: "Test sound & haptics", diagSub: "Find out what works on your device",
   loudAlways: "Sound in silent mode", loudAlwaysSub: "Plays despite the silent switch, but pauses your music",
@@ -124,7 +134,7 @@ en: {
   howTo: "How to play", skip: "Skip", next: "Next", letsGo: "Let’s go!",
   i1t: "Look<br>closely!", i1p: "At the start, all cards are face up for a moment. The bar shows how long.",
   i2t: "Find<br>pairs!", i2p: "Turn over two cards. Same image? Pair! Otherwise they flip back.",
-  i3t: "Collect<br>images!", i3p: "Win rounds to unlock new images. Each image takes a few more wins. Mini games wait in between.",
+  i3t: "Follow<br>the blot!", i3p: "Follow the blot through the world of ink. Before each new image there is a trial: match the cards with the same blot of colour.",
   newVersion: "New version!", reload: "Reload",
   iosTitle: "Add to<br>home screen", ios1: "1. Tap <b>Share</b> at the bottom of Safari (square with an arrow).", ios2: "2. Choose <b>Add to Home Screen</b> and tap <b>Add</b>.", ios3: "Memo Punch then opens full screen and works offline.", gotIt: "Got it",
   stages: [

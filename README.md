@@ -25,6 +25,9 @@ Alle Texte über das Projekt, die beiden Menschen dahinter (Zeichnungen sowie We
 Texte in [eckigen Klammern] sind Platzhalter und erscheinen in der App gestrichelt umrandet, bis sie ersetzt sind.
 Wichtig: Nach einer Änderung in `content.js` ist nichts weiter nötig: Die App holt neue Texte automatisch beim nächsten Öffnen.
 
+## Die Erzählung
+Jedes Bild hat einen Erzählschritt (`step`) in `content.js`. Oben in der Datei steht eine Schreibvorlage (Länge, Aufbau Ort · Moment · Spur, Akt-Rhythmus). Die mitgelieferten Texte sind ein Entwurf und sollen ersetzt werden. Die Akte stehen unter `journey.acts`.
+
 ## Testmodus
 Mit `?dev` am Ende der Adresse erscheint unter Optionen „Test: alles freischalten“. Ohne `?dev` ist der Eintrag unsichtbar.
 
