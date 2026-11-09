@@ -7,7 +7,7 @@ const T = i => C.images[i].title.de, STEP = i => C.images[i].step.de;
 const DEKO = (C.deko.ornamente || []).map(o => '../' + (typeof o === 'string' ? o : o.datei));
 const PROLOG = C.journey.prologue.de;
 let U = Math.max(1, Math.min(N, +(new URLSearchParams(location.search).get('u') || 6)));
-const PAGES = [['pfad-1-ranke.html', 'Ranke'], ['pfad-2-brett.html', 'Spielbrett'], ['pfad-3-comic.html', 'Comic'], ['pfad-4-sterne.html', 'Sternbild'], ['pfad-5-comic-weg.html', 'Comic-Weg']];
+const PAGES = [['pfad-1-ranke.html', 'Ranke'], ['pfad-2-brett.html', 'Spielbrett'], ['pfad-3-comic.html', 'Comic'], ['pfad-4-sterne.html', 'Sternbild'], ['pfad-5-comic-weg.html', 'Comic-Weg'], ['pfad-6-start.html', 'Start']];
 const $ = s => document.querySelector(s);
 
 function chrome(idx, dark) {
