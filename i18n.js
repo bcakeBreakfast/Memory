@@ -1,7 +1,8 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 211;
+window.STR_BUILD = 212;
 window.STR = {
 de: {
+  prologueTag: "Prolog", prologueTitle: "Es war<br>einmal …", startStory: "Weiter",
   bossPlay: "Prüfung!", bossTag: "Prüfung", bossMsg: "Prüfung · Finde gleiche Kleckse",
   bossReady: "Prüfung bereit: Bild {n} freispielen", bossSoon1: "Noch 1 Sieg bis zur Prüfung", bossSoonN: "Noch {r} Siege bis zur Prüfung",
   stationN: "Station {n}", newAct: "Neuer Akt", mapAria: "Dein Weg", lockedStation: "Station {n}, noch gesperrt",
@@ -79,6 +80,7 @@ de: {
   progressN: "{i} / {n}"
 },
 en: {
+  prologueTag: "Prologue", prologueTitle: "Once upon<br>a time …", startStory: "Next",
   bossPlay: "Trial!", bossTag: "Trial", bossMsg: "Trial · Match the blots",
   bossReady: "Trial ready: win image {n}", bossSoon1: "1 more win to the trial", bossSoonN: "{r} more wins to the trial",
   stationN: "Station {n}", newAct: "New act", mapAria: "Your journey", lockedStation: "Station {n}, locked",

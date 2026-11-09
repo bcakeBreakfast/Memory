@@ -406,13 +406,29 @@ html.standalone #app{position:fixed;top:0;bottom:0;left:0;right:0;height:auto;ma
 .fr{display:block;width:100%;height:100%;position:relative}
 .fr img{width:100%;height:100%;object-fit:cover;display:block}
 .kl{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#o-intro{transition:background .4s}
+#o-intro.storymode{background:var(--k);color:var(--y)}
+#o-intro.storymode .txt{color:var(--w)}
+#o-intro.storymode #iTag{background:var(--y);color:var(--k)}
+#o-intro.storymode .pill.out{color:var(--y);border-color:var(--y)}
+#o-intro.storymode .dots i{border-color:var(--y)}#o-intro.storymode .dots i.on{background:var(--y)}
+#o-intro.storymode .big{background:var(--y);color:var(--k);border-color:var(--y)}
+.mini.big0{position:relative;width:min(48vw,28svh,200px);border-color:var(--y);box-shadow:8px 8px 0 #333;transition:box-shadow .3s .9s,border-color .3s .9s}
+.slide.story.on .mini.big0{box-shadow:8px 8px 0 var(--p);border-color:var(--y)}
+.drop{position:absolute;left:50%;top:0;margin-left:-32px;opacity:0}
+.slide.story.on .drop{animation:drip 1.1s cubic-bezier(.5,0,.8,.6) .35s both}
+@keyframes drip{0%{opacity:1;transform:translateY(-60px) scaleY(1.2)}80%{opacity:1;transform:translateY(calc(min(24svh,180px))) scaleY(1.3)}100%{opacity:0;transform:translateY(calc(min(24svh,180px))) scale(1.6,.4)}}
+.splat{position:absolute;left:50%;top:50%;width:90px;height:90px;margin:-45px 0 0 -45px;background:var(--p);opacity:0;border-radius:42% 58% 63% 37%/45% 41% 59% 55%;mix-blend-mode:multiply;transform:scale(.2)}
+.t-tusche .splat{background:#000}
+.slide.story.on .splat{animation:splat .5s var(--ease-pop) 1.3s forwards}
+@keyframes splat{to{opacity:.85;transform:scale(1) rotate(20deg)}}
 body.calm *{animation-duration:.01s!important;transition-duration:.01s!important}
 body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=211"></script>
-<script src="content.js?v=211"></script>
+<script src="i18n.js?v=212"></script>
+<script src="content.js?v=212"></script>
 </head>
 <body>
 <div id="app">
@@ -578,13 +594,14 @@ body.calm .fx,body.calm .flash{display:none}
 
 <!-- EINFÜHRUNG -->
 <div class="ov" id="o-intro" role="dialog" data-ta="howTo">
-  <div class="top"><span class="pill" data-t="howTo"></span><button class="pill out" id="iSkip" data-t="skip"></button></div>
+  <div class="top"><span class="pill" id="iTag"></span><button class="pill out" id="iSkip" data-t="skip"></button></div>
   <div class="slides">
-    <div class="slide on"><div class="art" id="art1" aria-hidden="true"></div><h2 class="h" data-fit data-t="i1t"></h2><p class="txt" data-t="i1p"></p></div>
+    <div class="slide story on"><div class="art" id="art0" aria-hidden="true"></div><h2 class="h" data-fit data-t="prologueTitle"></h2><p class="txt" id="prologueTxt" style="white-space:pre-line"></p></div>
+    <div class="slide"><div class="art" id="art1" aria-hidden="true"></div><h2 class="h" data-fit data-t="i1t"></h2><p class="txt" data-t="i1p"></p></div>
     <div class="slide"><div class="art" id="art2" aria-hidden="true"></div><h2 class="h" data-fit data-t="i2t"></h2><p class="txt" data-t="i2p"></p></div>
     <div class="slide"><div class="art" id="art3" aria-hidden="true"></div><h2 class="h" data-fit data-t="i3t"></h2><p class="txt" data-t="i3p"></p></div>
   </div>
-  <div class="dots" id="iDots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+  <div class="dots" id="iDots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
   <button class="big" id="iNext"><span id="iLbl"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="stroke-width:3"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
 </div>
 
@@ -619,7 +636,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
-const BUILD=211;
+const BUILD=212;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -627,7 +644,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.1.2';
+const VERSION='2.1.3';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -913,14 +930,17 @@ $('#sIntro').addEventListener('click',()=>{SFX.tap();openIntro()});
 
 /* ===== Einführung ===== */
 let slide=0;
-function openIntro(){slide=0;drawSlide();
+function openIntro(withStory){slide=withStory&&loc(J().prologue)?0:1;
+  $('#prologueTxt').textContent=loc(J().prologue);
+  $('#art0').innerHTML='<div class="mini big0" style="transform:rotate(-4deg)"><img src="'+IMGS[0]+'" alt=""></div><span class="drop" aria-hidden="true">'+blobSvg(S.set.theme==='tusche'?'#000':'var(--p)',2,'width="64" height="64"').replace(/<circle cx="4[01]"[^>]*>|<circle cx="6[01]"[^>]*>/g,'')+'</span><span class="splat" aria-hidden="true"></span>';
+  drawSlide();
   $('#art1').innerHTML=[0,1,2].map(i=>'<div class="mini" style="transform:translate('+((i-1)*70)+'%,'+((i%2)*-14)+'%) rotate('+((i-1)*8)+'deg)"><img src="'+IMGS[i]+'" alt=""></div>').join('');
   $('#art2').innerHTML='<div class="mini" style="transform:translate(-58%,0) rotate(-6deg)"><img src="'+IMGS[1]+'" alt=""></div><div class="mini" style="transform:translate(58%,0) rotate(6deg)"><img src="'+IMGS[1]+'" alt=""></div><span class="tag" style="position:absolute;transform:translate(0,90px) rotate(-6deg);background:var(--p);color:var(--onp)">'+t('pair')+'</span>';
   $('#art3').innerHTML='<div class="burst" style="width:min(64vw,34svh,280px)"></div><div class="mini" style="transform:rotate(-5deg)"><img src="'+IMGS[2]+'" alt=""></div>';
   openOv('o-intro')}
-function drawSlide(){$$('.slide').forEach((s,i)=>{s.classList.toggle('on',i===slide);s.setAttribute('aria-hidden',i!==slide)});$$('#iDots i').forEach((d,i)=>d.classList.toggle('on',i===slide));$('#iLbl').textContent=slide===2?t('letsGo'):t('next');fitSoon()}
+function drawSlide(){$$('.slide').forEach((s,i)=>{s.classList.toggle('on',i===slide);s.setAttribute('aria-hidden',i!==slide)});$('#o-intro').classList.toggle('storymode',slide===0);$('#iTag').innerHTML=slide===0?t('prologueTag'):t('howTo');bgSync();$$('#iDots i').forEach((d,i)=>d.classList.toggle('on',i===slide));$('#iLbl').textContent=slide===3?t('letsGo'):t('next');fitSoon()}
 function endIntro(){S.intro=true;save();closeOv('o-intro')}
-$('#iNext').addEventListener('click',()=>{SFX.flip();if(slide<2){slide++;drawSlide()}else endIntro()});
+$('#iNext').addEventListener('click',()=>{SFX.flip();if(slide<3){slide++;drawSlide()}else endIntro()});
 $('#iSkip').addEventListener('click',endIntro);
 
 /* ===== Spiel ===== */
@@ -1270,7 +1290,7 @@ document.addEventListener('contextmenu',e=>{if(e.target.tagName==='IMG')e.preven
 applyLang();applySet();sizeApp();
 const startTab=Object.keys(HASH).find(k=>HASH[k]===location.hash.slice(1))||'home';
 goTab(startTab,true);
-if(!S.intro)openIntro();
+if(!S.intro)openIntro(true);
 </script>
 </body>
 </html>

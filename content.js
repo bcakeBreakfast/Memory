@@ -12,7 +12,7 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 211; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 212; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
@@ -89,6 +89,11 @@ window.CONTENT = {
       { from: 13, title: { de: "Akt III · Verblasst", en: "Act III · Fading" } },
       { from: 19, title: { de: "Akt IV · Heimkehr",  en: "Act IV · Homecoming" } }
     ],
+    // Prolog: erscheint beim allerersten Start vor der Anleitung (Entwurf)
+    prologue: {
+      de: "Es war einmal eine Welt aus Tusche. Alles darin war gezeichnet: Linien, Punkte, Muster, Seite um Seite. Nur Schwarz und Weiß.\nBis eines Tages ein kleiner Klecks Farbe vom Rand des Papiers tropfte …",
+      en: "Once upon a time there was a world made of ink. Everything in it was drawn: lines, dots, patterns, page after page. Only black and white.\nUntil one day a little blot of colour dripped from the edge of the paper …"
+    },
     // Wird am Ende des Weges angezeigt, solange noch Bilder fehlen
     more: { de: "Fortsetzung folgt …", en: "To be continued …" }
   },
@@ -99,7 +104,7 @@ window.CONTENT = {
     { // 1
       title: { de: "Blütenwolke", en: "Cloud of Blossoms" },
       story: { de: "Eine Wolke aus Perlenketten, Herzbögen und drei Hibiskusblüten. Je länger man hinsieht, desto mehr Schichten tauchen auf: Hinter jeder Blüte liegt noch ein Bogen, hinter jedem Bogen noch eine Perle.", en: "A cloud of pearl strings, heart-shaped arches and three hibiscus blossoms. The longer you look, the more layers appear: behind every blossom another arch, behind every arch another pearl." },
-      step: { de: "Es war einmal eine Welt aus Tusche: nur Schwarz, nur Weiß, Linie neben Linie. Bis eines Tages ein kleiner Klecks Farbe vom Rand des Papiers tropfte und mitten in einer Blütenwolke landete.", en: "Once upon a time there was a world made of ink: only black, only white, line beside line. Until one day a little blot of colour dripped from the edge of the paper and landed in a cloud of blossoms." }
+      step: { de: "Der Klecks landete mitten in einer Blütenwolke und blieb an einer Perle hängen. Dort, wo er aufkam, schimmerte die erste Blüte plötzlich rosa.", en: "The blot landed right in a cloud of blossoms and got caught on a pearl. Where it touched down, the first blossom suddenly shimmered pink." }
     },
     { // 2
       title: { de: "Sog", en: "Undertow" },
