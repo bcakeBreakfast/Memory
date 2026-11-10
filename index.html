@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="memo punch">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -105,6 +105,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
 .rd.fut{stroke:#B2AEA4}
 /* Meisterrunden: dunkler Ringpunkt, leichte Schattierung, ernsterer Grund */
 .rd.m{stroke:var(--ink);stroke-width:2;fill:var(--bg)}
+.mo{fill:none;stroke:var(--ink);stroke-width:1;opacity:.55}.mo.fut{stroke:#9E9A90;opacity:.5}
 .rd.m.on{fill:var(--ink)}
 .rd.m.fut{stroke:#9E9A90}
 .rd.mi{fill:var(--acc);stroke:none}
@@ -530,7 +531,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
 }
 
 /* ===================== Grunddaten ===================== */
-const VERSION='3.1.0';
+const VERSION='3.1.1';
 const C=window.CONTENT||{images:[],journey:{acts:[]},people:[]};
 const IMGS=C.images.map((_,i)=>'img/t'+(i+1)+'.webp?v=211'),ALL=IMGS.length,MAXP=8,NEED=[2,3,3,4,4,5,5,6];
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
@@ -652,6 +653,17 @@ addEventListener('resize',()=>{sizeApp();if(view==='home')renderMap(false);if(vi
 function count(el,to,fmt=x=>x,ms=700){const from=+(el.dataset.v||0);el.dataset.v=to;if(calm()||from===to){el.textContent=fmt(to);return}
   const t0=performance.now(),step=tt=>{const k=Math.min(1,(tt-t0)/ms),e=1-Math.pow(1-k,3);el.textContent=fmt(Math.round(from+(to-from)*e));if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
 
+/* Blätter mit dem Finger nach unten wegziehen */
+const DISMISS={det:()=>closeSheet('det'),about:()=>closeSheet('about'),ios:()=>closeSheet('ios'),pause:()=>$('#pGo').click(),win:()=>{const b=$('#wMap');b&&b.click()},lose:()=>$('#lMap').click()};
+$$('.sheet').forEach(sh=>{const pane=sh.querySelector('.pane');if(!pane||!DISMISS[sh.id])return;let y0=null,dy=0,t0=0,sc=null,drag=false;
+  pane.addEventListener('touchstart',e=>{sc=e.target.closest('.dscroll')||(pane.scrollHeight>pane.clientHeight+2?pane:null);if(sc&&sc.scrollTop>0){y0=null;return}
+    y0=e.touches[0].clientY;dy=0;t0=Date.now();drag=false},{passive:true});
+  pane.addEventListener('touchmove',e=>{if(y0===null)return;dy=e.touches[0].clientY-y0;
+    if(!drag){if(dy<6)return;if(sc&&sc.scrollTop>0){y0=null;return}drag=true}
+    e.preventDefault();pane.style.transition='none';pane.style.transform='translateY('+Math.max(0,dy)+'px)'},{passive:false});
+  pane.addEventListener('touchend',()=>{if(y0===null)return;y0=null;pane.style.transition='';const v=dy/Math.max(1,Date.now()-t0);
+    if(drag&&(dy>110||v>.65)){pane.style.transform='translateY(105%)';setTimeout(()=>{pane.style.transform=''},520);DISMISS[sh.id]()}else pane.style.transform='';drag=false},{passive:true})});
+
 /* ===================== Start: der Weg ===================== */
 let P=[],gapY=168,lit=new Set(),raf=0;
 function renderHome(opts={}){
@@ -677,12 +689,11 @@ function renderMap(enter){
   for(let i=2;i<cnt;i++){const n=NEED[Math.min(i-2,NEED.length-1)];tmp.setAttribute('d',seg(P[i-1],P[i]));let L=0;try{L=tmp.getTotalLength()}catch(e){}if(!L)break;
     for(let j=0;j<n;j++){const fr=j===n-1?.565:.25+.22*(n>2?j/(n-2):.5),pt=tmp.getPointAtLength(L*fr),cur=i===S.unlocked,on=i<S.unlocked||(cur&&j<S.prog);
       const m=j===n-1;if(m){mpos.push([pt.x,pt.y,i,cur,on]);
-        svg+=(cur?'<circle class="mring" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="6"/>':'')+'<circle data-s="'+i+'" class="rd m'+(on?' on':'')+(i>S.unlocked?' fut':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="6.5"/>'+(on?'<circle class="rd mi" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="2.2"/>':'');continue}
+        svg+=(cur?'<circle class="mring" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="6"/>':'')+'<circle class="mo'+(i>S.unlocked?' fut':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="10.5"/><circle data-s="'+i+'" class="rd m'+(on?' on':'')+(i>S.unlocked?' fut':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="6.5"/>'+(on?'<circle class="rd mi" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="2.2"/>':'');continue}
       svg+='<circle data-s="'+i+'" class="rd'+(on?' on':'')+(cur?' cur':'')+(i>S.unlocked?' fut':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(cur?4.5:3.5)+'"/>'}}
   let h='';
   mpos.forEach(([x,y,i,cur,on])=>{const g=gateRule(i+1);h+='<div class="shade'+(cur?' cur':'')+'" style="left:'+x+'px;top:'+y+'px;opacity:'+(i>S.unlocked?.5:1)+'"></div>'})
   h+=svg+'</svg>';
-  mpos.forEach(([x,y,i,cur,on])=>{const g=gateRule(i+1);if(i<=S.unlocked+1){const rt=P[i][0]<W/2;h+='<span class="mlbl'+(cur?' cur':'')+'" style="'+(rt?'left:'+(x+14):'right:'+(W-x+14))+'px;top:'+(y-6)+'px" aria-hidden="true">'+esc(t('gateShort'))+' · '+esc(g.name)+'</span>'}});
   const DK=((C.deko||{}).ornamente||[]).map(o=>typeof o==='string'?o:o.datei).filter(Boolean);
   for(let i=0;i<cnt-1&&DK.length;i++){const y=(P[i][1]+P[i+1][1])/2-20,left=i%2===0;
     h+='<img class="ghost" src="'+esc(DK[i%DK.length])+'" alt="" style="left:'+(left?6:W-6)+'px;top:'+y+'px;width:150px;--rr:'+((i*47)%30-15)+'deg">'}
