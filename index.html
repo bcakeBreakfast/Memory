@@ -27,6 +27,8 @@
   --top:calc(env(safe-area-inset-top) + 14px);--tabh:62px;--tabspace:calc(var(--tabh) + var(--bot) * .55 + 10px);--bot:env(safe-area-inset-bottom)}
 html.big{font-size:112.5%}
 html.shortvp{--bot:0px}
+/* Installierte App: iOS legt einen Weichzeichner unter die Statusleiste, Inhalt etwas tiefer setzen */
+html.sa{--top:calc(env(safe-area-inset-top) + 34px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,'Helvetica Neue',Helvetica,sans-serif;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 body{overscroll-behavior:none}
@@ -562,7 +564,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
 }
 
 /* ===================== Grunddaten ===================== */
-const VERSION='3.2.1';
+const VERSION='3.2.2';
 const C=window.CONTENT||{images:[],journey:{acts:[]},people:[]};
 const IMGS=C.images.map((_,i)=>'img/t'+(i+1)+'.webp?v=211'),ALL=IMGS.length,MAXP=8,NEED=[2,3,3,4,4,5,5,6];
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
@@ -684,6 +686,7 @@ document.addEventListener('contextmenu',e=>{if(e.target.tagName==='IMG')e.preven
    gehört nicht zur Seite. Dann den unteren Sicherheitsabstand weglassen, sonst zählt er doppelt. */
 const standaloneMode=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 function sizeApp(){
+  document.documentElement.classList.toggle('sa',!!standaloneMode);
   if(standaloneMode&&/iP(hone|ad|od)/.test(navigator.userAgent)){const H=Math.max(screen.height,screen.width),W=Math.min(screen.height,screen.width),
     full=innerWidth<innerHeight?H:W;document.documentElement.classList.toggle('shortvp',full-innerHeight>30)}
   moveInd()}
