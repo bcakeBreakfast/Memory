@@ -32,7 +32,7 @@ body{overscroll-behavior:none}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:12px}
-.app{position:relative;height:var(--vh,100svh);max-width:480px;margin:0 auto;overflow:hidden;user-select:none;-webkit-user-select:none}
+.app{position:fixed;top:0;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;overflow:hidden;user-select:none;-webkit-user-select:none}
 .cap{font-size:.656rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .num{font-variant-numeric:tabular-nums}
 .ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
@@ -227,6 +227,9 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
 .cell.lock .l{color:var(--mute)}
 .cell.in{animation:fade .5s var(--out) backwards}
 .cell.in{opacity:0;transform:translateY(8px);animation:fade .5s var(--out) forwards}
+#det .pane{height:min(90%,780px);max-height:none;display:flex;flex-direction:column;overflow:hidden;padding-bottom:calc(var(--bot) + 16px)}
+.dscroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none;margin:0 -22px;padding:0 22px 18px;-webkit-mask-image:linear-gradient(#000 calc(100% - 28px),transparent);mask-image:linear-gradient(#000 calc(100% - 28px),transparent)}
+.dscroll::-webkit-scrollbar{display:none}
 .detail{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
 .dnav{display:flex;align-items:center;gap:18px;margin:6px 0 8px}
 .detail .big{width:min(220px,56vw);aspect-ratio:1;border-radius:50%;padding:6px;background:var(--card);box-shadow:0 0 0 1px var(--line),0 16px 40px rgba(0,0,0,.08)}
@@ -488,7 +491,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
 }
 
 /* ===================== Grunddaten ===================== */
-const VERSION='3.0.1';
+const VERSION='3.0.2';
 const C=window.CONTENT||{images:[],journey:{acts:[]},people:[]};
 const IMGS=C.images.map((_,i)=>'img/t'+(i+1)+'.webp?v=211'),ALL=IMGS.length,MAXP=8,NEED=[2,3,3,4,4,5,5,6];
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
@@ -598,7 +601,7 @@ function openSheet(id){$('#'+id).classList.add('on')}
 function closeSheet(id){$('#'+id).classList.remove('on')}
 $$('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s&&['det','about','ios','ask'].includes(s.id))closeSheet(s.id)}));
 document.addEventListener('contextmenu',e=>{if(e.target.tagName==='IMG')e.preventDefault()});
-function sizeApp(){document.documentElement.style.setProperty('--vh',innerHeight+'px');moveInd()}
+function sizeApp(){moveInd()}
 addEventListener('resize',()=>{sizeApp();if(view==='home')renderMap(false);if(view==='game')fitBoard()});
 
 function count(el,to,fmt=x=>x,ms=700){const from=+(el.dataset.v||0);el.dataset.v=to;if(calm()||from===to){el.textContent=fmt(to);return}
@@ -862,14 +865,14 @@ function renderCol(){
 }
 function openDetail(i,from){
   const story=STORY(i),step=STEP(i);
-  $('#detPane').innerHTML='<div class="grip"></div><div class="detail">'+
+  $('#detPane').innerHTML='<div class="grip"></div><div class="dscroll" id="dScroll"><div class="detail">'+
     '<div class="dnav"><button class="key" id="dPrev" aria-label="'+esc(t('prev'))+'"'+(i<1?' disabled style="opacity:.3"':'')+'><svg class="ico" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>'+
     '<div class="big" id="dBig"><img src="'+IMGS[i]+'" alt="'+esc(T(i))+'"></div>'+
     '<button class="key" id="dNext" aria-label="'+esc(t('nextImg'))+'"'+(i>=S.unlocked-1?' disabled style="opacity:.3"':'')+'><svg class="ico" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>'+
     '<span class="cap">'+esc(t('imageOf',{n:two(i+1),of:ALL}))+'</span><h2>'+esc(T(i))+'</h2>'+
     '<div class="meta cap">'+(S.at[i]?'<span>'+esc(t('unlockedIn',{n:S.at[i]}))+'</span>':'')+'<span>'+esc(t('foundTimes',{n:S.found[i]||0}))+'</span></div>'+
-    '<div class="txt">'+(step?'<p class="q">'+esc(step)+'</p>':'')+(story?'<p>'+esc(story)+'</p>':'')+'</div>'+
-    '<button class="btn g" id="dClose" style="margin-top:14px;width:100%">'+esc(t('close'))+'</button></div>';
+    '<div class="txt">'+(step?'<p class="q">'+esc(step)+'</p>':'')+(story?'<p>'+esc(story)+'</p>':'')+'</div></div></div>'+
+    '<button class="btn g" id="dClose" style="margin-top:8px;width:100%;flex:none">'+esc(t('close'))+'</button>';
   const sh=$('#det'),was=sh.classList.contains('on');openSheet('det');
   if(from&&!was&&!calm()){const big=$('#dBig');big.style.visibility='hidden';
     setTimeout(()=>{const a=from.getBoundingClientRect(),b=big.getBoundingClientRect(),f=document.createElement('div');f.className='fly';f.innerHTML='<img src="'+IMGS[i]+'" alt="">';
