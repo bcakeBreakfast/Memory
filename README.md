@@ -1,3 +1,12 @@
+# memo punch · Version 3 (Gestaltung „Rams rund“)
+
+- **App:** `index.html` (alles in einer Datei), Texte der Oberfläche in `strings.js` (Deutsch/Englisch).
+- **Geschichte, Bildtitel, Personen, Copyright, Ornamente:** `content.js`.
+- **Bilder:** `img/t1.webp` … (900 px), Ornamente in `deko/`.
+- **Offline & Updates:** `sw.js` (Netz zuerst, sonst Speicher). Bei neuer Version lädt die App selbst neu.
+- **Alte Punch-Gestaltung:** weiterhin unter `/punch/` erreichbar, mit demselben Spielstand.
+- **Testmodus:** `?dev` an die Adresse hängen, dann gibt es in den Optionen „alles freischalten“.
+
 # Memo Punch
 
 Memory mit eigenen Tuschezeichnungen, als installierbare Web-App (PWA).
