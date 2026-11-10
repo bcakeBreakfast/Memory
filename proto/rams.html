@@ -81,7 +81,7 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 @keyframes ring{0%{box-shadow:0 0 0 0 rgba(232,87,42,.35)}100%{box-shadow:0 0 0 20px rgba(232,87,42,0)}}
 .st.lock{width:16px;height:16px;padding:0;background:var(--dot);box-shadow:none;pointer-events:none}
 .st.lock .n{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;color:var(--mute)}
-.st.fresh{animation:fresh 1.2s var(--spring) both}
+.st.fresh{animation:fresh 1.2s var(--spring) backwards}
 @keyframes fresh{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}60%{opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
 .rd{fill:var(--bg);stroke:var(--ink);stroke-width:1.5}
 .rd.on{fill:var(--ink)}
@@ -94,12 +94,29 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .snip::before{content:'';display:block;width:14px;height:1px;background:var(--acc);margin-bottom:6px}
 .snip.r::before{margin-left:auto}
 .ghost{position:absolute;opacity:.09;pointer-events:none;transform:translate(-50%,-50%) rotate(var(--rr));filter:grayscale(1)}
-.enter .snip,.snip.in{animation:fade .7s var(--out) both}
+/* Ruhige Bewegung beim Scrollen */
+.mapin .st:not(.lock){transition:transform .6s var(--spring),opacity .6s var(--ease),box-shadow .6s var(--ease)}
+.mapin .st .lbl{transition:box-shadow .6s,background .6s}
+.mapin .st .lbl b{transition:color .6s}
+.st.focus{transform:translate(-50%,-50%) scale(1.07);box-shadow:0 2px 2px rgba(0,0,0,.06),0 16px 32px rgba(0,0,0,.12)}
+.st.focus .lbl{box-shadow:0 1px 0 var(--line),0 6px 14px rgba(0,0,0,.06)}
+.st.focus .lbl b{color:var(--acc)}
+.hasf .st:not(.focus):not(.next):not(.lock){opacity:.72}
+.snip{opacity:.25;transition:opacity .8s var(--ease),transform .8s var(--out)}
+.snip.l{transform:translate(-8px,-50%)}.snip.r{transform:translate(8px,-50%)}
+.snip.vis{opacity:1;transform:translate(0,-50%)}
+.snip::before{transform:scaleX(0);transform-origin:left;transition:transform .8s .2s var(--out)}
+.snip.r::before{transform-origin:right}
+.snip.vis::before{transform:none}
+.ghost{will-change:translate}
+.glint{fill:var(--acc);filter:drop-shadow(0 0 4px rgba(232,87,42,.6))}
+.act{transition:opacity .8s}
+.act.dim{opacity:.35}
 .act{position:absolute;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;max-width:120px;line-height:1.3}
 .act.l{left:20px}.act.r{right:20px;text-align:right}
 .act b{font-weight:600;color:var(--ink);letter-spacing:.08em}
 .enter .st,.enter .lbl{opacity:0}
-.st.in{animation:stIn .6s var(--out) both}
+.st.in{animation:stIn .6s var(--out) backwards}
 @keyframes stIn{from{opacity:0;transform:translate(-50%,-30%) scale(.9)}to{opacity:1}}
 .status{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--soft);border-top:1px solid var(--line);padding-top:12px;flex:none}
 .pips{display:flex;gap:5px}
@@ -422,12 +439,12 @@ function renderMap(enter){
   for(let i=0;i<cnt;i++)P.push([W/2+(i%2?1:-1)*W*.2,H-pad-i*gap]);
   const seg=(a,b)=>{const my=(a[1]+b[1])/2;return 'M'+a[0]+' '+a[1]+'C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]};
   let svg='<svg width="'+W+'" height="'+H+'" aria-hidden="true">';
-  for(let i=1;i<cnt;i++){const c=i<S.unlocked?'p-done':i===S.unlocked?'p-next':'p-fut';svg+='<path class="'+c+'" d="'+seg(P[i-1],P[i])+'"/>'}
+  for(let i=1;i<cnt;i++){const c=i<S.unlocked?'p-done':i===S.unlocked?'p-next':'p-fut';svg+='<path class="'+c+'" data-s="'+i+'" d="'+seg(P[i-1],P[i])+'"/>'}
   /* Runden als Punkte auf jedem Wegstück */
   const tmp=document.createElementNS('http://www.w3.org/2000/svg','path');
   for(let i=1;i<cnt;i++){const n=NEED[Math.min(i-1,NEED.length-1)],d=seg(P[i-1],P[i]);tmp.setAttribute('d',d);const L=tmp.getTotalLength?tmp.getTotalLength():0;if(!L)break;
     for(let j=0;j<n;j++){const pt=tmp.getPointAtLength(L*(j+1)/(n+1)),cur=i===S.unlocked,on=i<S.unlocked||(cur&&j<S.prog);
-      svg+='<circle class="rd'+(on?' on':'')+(cur?' cur':'')+(i>S.unlocked?' fut':'')+(cur&&j===S.prog-1&&opts_pip?' pop':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(cur?4.5:3.5)+'"/>'}}
+      svg+='<circle data-s="'+i+'" class="rd'+(on?' on':'')+(cur?' cur':'')+(i>S.unlocked?' fut':'')+(cur&&j===S.prog-1&&opts_pip?' pop':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(cur?4.5:3.5)+'"/>'}}
   let h=svg+'</svg>';
   /* blasse Zeichnungen am Rand */
   const DK=((C.deko||{}).ornamente||[]).map(o=>'../'+(typeof o==='string'?o:o.datei));
@@ -436,8 +453,8 @@ function renderMap(enter){
   /* Geschichte am Weg: Anfang des Bildtexts neben jedem gegangenen Stück */
   for(let i=1;i<Math.min(cnt,S.unlocked);i++){const up=P[i],y=(P[i-1][1]+P[i][1])/2-46,side=up[0]<W/2?'r':'l';
     let t=STEP(i).split(/(?<=[.!?])\s/)[0];if(t.length>52)t=t.slice(0,50).replace(/\s\S*$/,'')+' …';
-    h+='<div class="snip '+side+(enter?' in':'')+'" style="top:'+y+'px;animation-delay:'+(.3+(cnt-i)*.05)+'s">'+t+'</div>'}
-  C.journey.acts.forEach(a=>{const i=a.from-1;if(i>=0&&i<cnt){const [nm,tt]=a.title.de.split(' · ');h+='<div class="act cap '+(P[i][0]<W/2?'r':'l')+'" style="top:'+P[i][1]+'px"><span>'+nm+'</span><b>'+(tt||'')+'</b></div>'}});
+    h+='<div class="snip '+side+'" data-y="'+(y+46)+'" style="top:'+y+'px">'+t+'</div>'}
+  gapY=gap;C.journey.acts.forEach(a=>{const i=a.from-1;if(i>=0&&i<cnt){const [nm,tt]=a.title.de.split(' · ');h+='<div class="act cap '+(P[i][0]<W/2?'r':'l')+'" style="top:'+P[i][1]+'px"><span>'+nm+'</span><b>'+(tt||'')+'</b></div>'}});
   for(let i=0;i<cnt;i++){const [x,y]=P[i],st='left:'+x+'px;top:'+y+'px;animation-delay:'+(enter?(cnt-1-i)*.06:0)+'s';
     if(i<S.unlocked)h+='<button class="st'+(S.fresh===i?' fresh':enter?' in':'')+'" data-i="'+i+'" style="'+st+'" aria-label="Bild '+(i+1)+': '+T(i)+'"><img src="'+IM(i)+'" alt=""><span class="lbl"><b>'+two(i+1)+'</b>'+T(i)+'</span></button>';
     else if(i===S.unlocked)h+='<button class="st next'+(enter?' in':'')+'" id="nextSt" style="'+st+'" aria-label="Nächstes Bild">?<span class="lbl"><b>'+two(i+1)+'</b>Nächstes Bild</span></button>';
@@ -450,7 +467,36 @@ function renderMap(enter){
   $$('#mapIn .st[data-i]').forEach(b=>b.onclick=()=>{SND.tap();openDetail(+b.dataset.i,b)});
   const nx=$('#nextSt');if(nx)nx.onclick=()=>startGame();
   if(S.fresh>=0){S.fresh=-1;save()}
+  setupScroll(enter);
 }
+/* ===================== Weg beim Scrollen ===================== */
+let lit=new Set(),raf=0,gapY=168;
+function setupScroll(enter){
+  const map=$('#map');lit=new Set();map.onscroll=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;onScroll(true)})};
+  onScroll(false);if(!S.set.calm)setTimeout(()=>onScroll(true),enter?1100:300);
+}
+function onScroll(fx){
+  const map=$('#map'),st=map.scrollTop,h=map.clientHeight,c=st+h*.42,inn=$('#mapIn');if(!P.length)return;
+  // 1) Station in der Mitte hervorheben
+  let best=-1,bd=1e9;P.forEach((p,i)=>{if(i<=S.unlocked){const d=Math.abs(p[1]-c);if(d<bd){bd=d;best=i}}});
+  const near=bd<gapY*.55&&best<S.unlocked;inn.classList.toggle('hasf',near);
+  $$('#mapIn .st').forEach((e,k)=>{const i=e.dataset.i!=null?+e.dataset.i:(e.id==='nextSt'?S.unlocked:-1);e.classList.toggle('focus',near&&i===best&&i<S.unlocked)});
+  // 2) Geschichte nahe der Mitte einblenden
+  $$('#mapIn .snip').forEach(e=>e.classList.toggle('vis',Math.abs(+e.dataset.y-c)<h*.36));
+  // 3) Zeichnungen gleiten langsamer
+  if(!S.set.calm)$$('#mapIn .ghost').forEach((g,k)=>g.style.translate='0 '+(st*.12*(k%2?1:.7)).toFixed(1)+'px');
+  if(!fx||S.set.calm)return;
+  // 4) Wegstück kommt ins Bild: Punkte leuchten nacheinander, ein Lichtpunkt läuft entlang
+  for(let i=1;i<P.length;i++){const mid=(P[i-1][1]+P[i][1])/2;if(lit.has(i)||mid<st+60||mid>st+h-60)continue;lit.add(i);
+    const dots=$$('#mapIn circle.rd[data-s="'+i+'"]');
+    dots.forEach((d,j)=>{const r0=+d.getAttribute('r');d.animate([{r:r0+'px'},{r:(r0+2.6)+'px',offset:.4},{r:r0+'px'}],{duration:620,delay:j*110,easing:'cubic-bezier(.2,1.25,.4,1)'})});
+    if(i<=S.unlocked)glint(i)}
+}
+function glint(i){const path=$('#mapIn path[data-s="'+i+'"]');if(!path)return;const L=path.getTotalLength(),svg=path.ownerSVGElement;
+  const g=document.createElementNS('http://www.w3.org/2000/svg','circle');g.setAttribute('r','3.6');g.setAttribute('class','glint');svg.append(g);
+  const t0=performance.now(),D=1300,step=t=>{const k=Math.min(1,(t-t0)/D),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,p=path.getPointAtLength(L*e);
+    g.setAttribute('cx',p.x);g.setAttribute('cy',p.y);g.style.opacity=k<.12?k/.12:k>.85?(1-k)/.15:1;if(k<1)requestAnimationFrame(step);else g.remove()};
+  requestAnimationFrame(step)}
 $('#play').onclick=()=>startGame();
 
 /* ===================== Zoom-Übergang ===================== */
