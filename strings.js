@@ -1,7 +1,7 @@
 /* memo punch · Oberflächentexte (Deutsch / Englisch)
    Die Geschichte, Bildtitel und Personen stehen in content.js.
    Platzhalter in geschweiften Klammern, z. B. {n}, werden automatisch ersetzt. */
-window.STR_BUILD = 300; // nicht ändern: gehört zur Version der App
+window.STR_BUILD = 301; // nicht ändern: gehört zur Version der App
 window.STR = {
 de: {
   appName: "memo punch", logoA: "memo", logoB: "punch!",
@@ -42,9 +42,9 @@ de: {
   /* Optionen */
   setTitle: "Optionen", difficulty: "Schwierigkeit",
   modeNoteEasy: "Bilder bleiben länger sichtbar", modeNotePro: "Kürzer zeigen, Tauschen, begrenzte Fehler",
-  language: "Sprache", sound: "Ton", soundSub: "Leise Klicks beim Spielen",
-  loud: "Ton auch bei Lautlos", loudSub: "Pausiert dabei deine Musik",
-  haptic: "Vibration", hapticSub: "Kurzes Signal bei Treffern",
+  language: "Sprache", sound: "Ton", soundSub: "Weiche Klänge beim Spielen",
+  loud: "Ton auch bei Lautlos", loudSub: "Sonst schaltet der Lautlos-Schalter den Ton stumm",
+  haptic: "Vibration", hapticSub: "Kurzes Signal bei Treffern", hapticIOS: "Feines Klicken beim Tippen, je nach iOS-Version",
   calm: "Ruhige Bewegung", calmSub: "Animationen fast aus",
   big: "Größere Schrift", bigSub: "Alle Texte etwas größer",
   install: "App installieren", installSub: "Auf den Homebildschirm legen",
@@ -113,9 +113,9 @@ en: {
   bestTimes: "Best times", pairsN: "{n} pairs", movesN: "{n} moves", minisTitle: "Mini games", lengthN: "Length {n}", pointsN: "{n} pts",
   setTitle: "Settings", difficulty: "Difficulty",
   modeNoteEasy: "Images stay visible longer", modeNotePro: "Shorter peek, swapping, limited mistakes",
-  language: "Language", sound: "Sound", soundSub: "Soft clicks while playing",
-  loud: "Sound in silent mode", loudSub: "Pauses your music",
-  haptic: "Vibration", hapticSub: "Short buzz on matches",
+  language: "Language", sound: "Sound", soundSub: "Soft sounds while playing",
+  loud: "Sound in silent mode", loudSub: "Otherwise the silent switch mutes the sound",
+  haptic: "Vibration", hapticSub: "Short buzz on matches", hapticIOS: "Subtle tick when tapping, depending on iOS version",
   calm: "Calm motion", calmSub: "Animations almost off",
   big: "Larger text", bigSub: "All text a little bigger",
   install: "Install app", installSub: "Add to your home screen",

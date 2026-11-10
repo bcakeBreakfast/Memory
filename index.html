@@ -387,7 +387,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
       <div class="list">
         <button class="li" role="switch" data-k="sound"><span><span data-t="sound"></span><small data-t="soundSub"></small></span><span class="sw"></span></button>
         <button class="li" role="switch" data-k="loud" id="loudRow"><span><span data-t="loud"></span><small data-t="loudSub"></small></span><span class="sw"></span></button>
-        <button class="li" role="switch" data-k="haptic" id="hapRow"><span><span data-t="haptic"></span><small data-t="hapticSub"></small></span><span class="sw"></span></button>
+        <button class="li" role="switch" data-k="haptic" id="hapRow"><span><span data-t="haptic"></span><small id="hapSub"></small></span><span class="sw"></span></button>
         <button class="li" role="switch" data-k="calm"><span><span data-t="calm"></span><small data-t="calmSub"></small></span><span class="sw"></span></button>
         <button class="li" role="switch" data-k="big"><span><span data-t="big"></span><small data-t="bigSub"></small></span><span class="sw"></span></button>
       </div>
@@ -476,11 +476,11 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
   </div>
 </div>
 
-<script src="strings.js?v=300"></script>
-<script src="content.js?v=300"></script>
+<script src="strings.js?v=301"></script>
+<script src="content.js?v=301"></script>
 <script>
 /* ===== Selbstreparatur: passen Texte und Seite nicht zusammen, alten Speicher leeren und einmal neu laden ===== */
-const BUILD=300;
+const BUILD=301;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -488,7 +488,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
 }
 
 /* ===================== Grunddaten ===================== */
-const VERSION='3.0.0';
+const VERSION='3.0.1';
 const C=window.CONTENT||{images:[],journey:{acts:[]},people:[]};
 const IMGS=C.images.map((_,i)=>'img/t'+(i+1)+'.webp?v=211'),ALL=IMGS.length,MAXP=8,NEED=[2,3,3,4,4,5,5,6];
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
@@ -510,6 +510,7 @@ let S=FRESH();
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.round){const f=FRESH();S={...f,...s,stats:{...f.stats,...s.stats},set:{...f.set,...s.set},mini:{...f.mini,...(s.mini||{})}};
   while(S.found.length<ALL)S.found.push(0);while(S.at.length<ALL)S.at.push(0);if(!Array.isArray(S.hist))S.hist=[];if(S.jokers===undefined)S.jokers=1;if(S.fresh===undefined)S.fresh=-1}}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+if(!S.set.v3audio){S.set.v3audio=true;S.set.sound=true;if(/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1))S.set.loud=true;save()}
 const need=()=>NEED[Math.min(Math.max(0,S.unlocked-2),NEED.length-1)];
 const PRO=()=>S.set.mode==='pro';
 const calm=()=>S.set.calm||matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -533,22 +534,52 @@ function applyLang(){
 const credits=()=>PEOPLE().map(p=>loc(p.role)+': '+(p.name||'')).join(' · ');
 const copyLine=()=>'© '+((C.copyright||{}).year||new Date().getFullYear())+' '+PEOPLE().map(p=>p.name).join(' · ');
 
-/* ===================== Ton & Vibration ===================== */
-let AC=null;
-function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume()}catch(e){}return AC}
+/* ===================== Ton & Vibration =====================
+   Klang: weich und warm, wie Holz und kleine Glocken. Alles wird live erzeugt,
+   über einen Kompressor und einen sanften Tiefpass, damit nichts spitz klingt. */
+const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+let AC=null,OUT=null,NOISE=null;
+function ac(){try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();
+    const comp=AC.createDynamicsCompressor();comp.threshold.value=-20;comp.knee.value=12;comp.ratio.value=4;comp.attack.value=.003;comp.release.value=.2;
+    const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=5200;lp.Q.value=.3;
+    OUT=AC.createGain();OUT.gain.value=.9;OUT.connect(lp).connect(comp).connect(AC.destination);
+    const n=AC.sampleRate*.5|0;NOISE=AC.createBuffer(1,n,AC.sampleRate);const d=NOISE.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1}
+  if(AC.state!=='running')AC.resume()}catch(e){}return AC}
 function setSession(){try{if(navigator.audioSession){const w=S.set.loud?'playback':'ambient';if(navigator.audioSession.type!==w)navigator.audioSession.type=w}}catch(e){}}
 function unlockAudio(){setSession();const a=ac();if(a&&!unlockAudio.done){try{const b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0);unlockAudio.done=true}catch(e){}}}
-['touchend','click'].forEach(ev=>document.addEventListener(ev,unlockAudio,{capture:true,passive:true}));
-function tone(f,d=.08,v=.05,type='sine',delay=0){if(!S.set.sound)return;const a=ac();if(!a)return;try{const tt=a.currentTime+delay,o=a.createOscillator(),g=a.createGain();
-  o.type=type;o.frequency.setValueAtTime(f,tt);g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(v,tt+.006);g.gain.exponentialRampToValueAtTime(.0001,tt+d);o.connect(g).connect(a.destination);o.start(tt);o.stop(tt+d+.02)}catch(e){}}
-const canVibrate='vibrate' in navigator&&!/iP(hone|ad|od)/.test(navigator.userAgent);
-const buzz=p=>{if(S.set.haptic&&canVibrate)try{navigator.vibrate(p)}catch(e){}};
-const SND={tap:()=>{tone(1400,.04,.03,'triangle');buzz(5)},flip:()=>tone(900,.05,.035,'triangle'),match:()=>{tone(660,.18,.05);tone(990,.22,.04,'sine',.07);buzz(12)},
-  miss:()=>{tone(240,.12,.035,'triangle');buzz(30)},note:k=>tone([523,659,784,880,1047,1175][k%6],.25,.05),
-  win:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.4,.045,'sine',i*.09));buzz([15,40,15])},
-  unlock:()=>{[392,523,659,784,1047,1319].forEach((f,i)=>tone(f,.6,.04,'sine',i*.11));buzz([20,50,20,50,30])},
-  lose:()=>{tone(330,.25,.04);tone(247,.35,.04,'sine',.15);buzz([60,40,60])}};
-
+['touchstart','touchend','click'].forEach(ev=>document.addEventListener(ev,unlockAudio,{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')AC.resume().catch(()=>{})});
+const ok=()=>S.set.sound&&ac()&&OUT;
+function voice(type,f,at,v,dec,f2){const a=AC,tt=a.currentTime+at,o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,tt);if(f2)o.frequency.exponentialRampToValueAtTime(f2,tt+dec*.6);
+  g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(v,tt+.004);g.gain.exponentialRampToValueAtTime(.0001,tt+dec);o.connect(g).connect(OUT);o.start(tt);o.stop(tt+dec+.05)}
+/* kleine Glocke: Grundton + leiser Oberton, weich ausklingend */
+function bell(f,at=0,v=.2,dec=.9){if(!ok())return;try{voice('sine',f,at,v,dec);voice('sine',f*2.01,at,v*.18,dec*.45);voice('sine',f*3.98,at,v*.06,dec*.2)}catch(e){}}
+/* Holz-Tock: kurzer, tiefer Anschlag */
+function tock(f=620,at=0,v=.22){if(!ok())return;try{voice('sine',f,at,v,.09,f*.66);voice('triangle',f*2.3,at,v*.12,.03)}catch(e){}}
+/* Papier: gefiltertes Rauschen */
+function paper(at=0,v=.12,dec=.08){if(!ok())return;try{const a=AC,tt=a.currentTime+at,src=a.createBufferSource(),bp=a.createBiquadFilter(),g=a.createGain();
+  src.buffer=NOISE;bp.type='bandpass';bp.frequency.setValueAtTime(1300,tt);bp.frequency.exponentialRampToValueAtTime(2800,tt+dec);bp.Q.value=.9;
+  g.gain.setValueAtTime(.0001,tt);g.gain.exponentialRampToValueAtTime(v,tt+.012);g.gain.exponentialRampToValueAtTime(.0001,tt+dec);
+  src.connect(bp).connect(g).connect(OUT);src.start(tt,Math.random()*.3);src.stop(tt+dec+.05)}catch(e){}}
+/* Kompatibel zu älteren Aufrufen: tone(Frequenz, Dauer, Lautstärke, Typ, Verzögerung) klingt jetzt als Glocke */
+function tone(f,d=.3,v=.05,type,delay=0){bell(f,delay,Math.min(.3,v*3.6),Math.max(.35,d*2))}
+const PENT=[587,659,784,880,988,1175];
+/* Haptik: Android über vibrate, iPhone über einen versteckten Schalter (wirkt nur direkt beim Tippen) */
+const canVibrate='vibrate' in navigator&&!isIOS;
+let hapEl=null;
+if(isIOS){try{const l=document.createElement('label');l.setAttribute('aria-hidden','true');l.style.cssText='position:fixed;left:-60px;top:0;width:40px;height:30px;opacity:.01;overflow:hidden;pointer-events:none';
+  const i=document.createElement('input');i.type='checkbox';i.setAttribute('switch','');i.tabIndex=-1;l.append(i);document.body.append(l);hapEl=l}catch(e){}}
+const hasHaptic=canVibrate||!!hapEl;
+function buzz(p){if(!S.set.haptic)return;try{if(canVibrate)navigator.vibrate(p);else if(hapEl)hapEl.click()}catch(e){}}
+const SND={
+  tap:()=>{tock(640,0,.16);buzz(6)},
+  flip:()=>{paper(0,.11,.07);tock(880,.005,.07)},
+  match:()=>{bell(784,0,.2,.8);bell(1175,.09,.15,1)},
+  miss:()=>{tock(300,0,.2);tock(250,.09,.16)},
+  note:k=>bell(PENT[k%6],0,.2,.7),
+  win:()=>{[587,740,880,1175].forEach((f,i)=>bell(f,i*.11,.17,1.1))},
+  unlock:()=>{[440,587,659,880,988,1175].forEach((f,i)=>bell(f,i*.12,.15,1.2));bell(587,.78,.12,2.2);bell(880,.8,.1,2.2)},
+  lose:()=>{bell(440,0,.16,.8);bell(330,.18,.16,1.2)}};
 /* ===================== Navigation ===================== */
 let view='home',pendingReload=false;
 const TABS=['home','col','stats','set'];
@@ -689,8 +720,8 @@ function drawLives(){const el=$('#lives');el.hidden=!rl.lives;el.innerHTML=Array
 function drawJoker(){const b=$('#joker');$('#jokerN').textContent=S.jokers;b.classList.toggle('empty',S.jokers<1);b.setAttribute('aria-label',t('jokerAria',{n:S.jokers}))}
 function flip(c){
   if(lock||c.classList.contains('up')||c.classList.contains('done'))return;
-  SND.flip();c.classList.add('up');open.push(c);labelAll();if(open.length<2)return;
-  moves++;bump('#hM',moves);lock=true;const [a,b]=open;
+  SND.flip();c.classList.add('up');open.push(c);labelAll();if(open.length<2){buzz(6);return}
+  moves++;bump('#hM',moves);lock=true;const [a,b]=open;buzz(a.dataset.id===b.dataset.id?[12,40,12]:20);
   if(a.dataset.id===b.dataset.id){later(()=>{a.classList.add('done');b.classList.add('done');a.classList.remove('up');b.classList.remove('up');SND.match();
       found++;combo++;S.found[+a.dataset.id]=(S.found[+a.dataset.id]||0)+1;bump('#hP',found,v=>v+'/'+pairs);open=[];lock=false;labelAll();
       if(found===pairs){setMsg(t('allPairs'));later(win,700);return}
@@ -865,14 +896,13 @@ function renderStats(){
 
 /* ===================== Optionen ===================== */
 const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 let installEvt=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(view==='set')renderSet()});
 function segSet(el,attr,val){$$('#'+el+' button').forEach(b=>b.setAttribute('aria-checked',b.dataset[attr]===val));$('#'+el).classList.toggle('r',$$('#'+el+' button')[1].dataset[attr]===val)}
 function renderSet(){
   $$('[data-k]').forEach(b=>b.setAttribute('aria-checked',!!S.set[b.dataset.k]));
   segSet('mode','m',S.set.mode);segSet('lang','l',L);
   $('#modeNote').textContent=PRO()?t('modeNotePro'):t('modeNoteEasy');
-  $('#hapRow').hidden=!canVibrate;$('#loudRow').hidden=!isIOS;
+  $('#hapRow').hidden=!hasHaptic;$('#hapSub').textContent=isIOS?t('hapticIOS'):t('hapticSub');$('#loudRow').hidden=!isIOS;
   $('#installRow').hidden=standalone||(!installEvt&&!isIOS);$('#devRow').hidden=!DEV;
 }
 $$('[data-k]').forEach(b=>b.onclick=()=>{S.set[b.dataset.k]=!S.set[b.dataset.k];save();applySet();renderSet();SND.tap()});
