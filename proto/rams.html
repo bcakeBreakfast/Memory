@@ -83,6 +83,18 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .st.lock .n{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);font-size:11px;font-weight:600;color:var(--mute)}
 .st.fresh{animation:fresh 1.2s var(--spring) both}
 @keyframes fresh{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}60%{opacity:1}100%{transform:translate(-50%,-50%) scale(1)}}
+.rd{fill:var(--bg);stroke:var(--ink);stroke-width:1.5}
+.rd.on{fill:var(--ink)}
+.rd.cur{stroke:var(--acc)}.rd.cur.on{fill:var(--acc)}
+.rd.fut{stroke:#B2AEA4;fill:var(--bg)}
+.rd.pop{animation:rdpop .6s var(--spring)}
+@keyframes rdpop{40%{r:7px}}
+.snip{position:absolute;transform:translateY(-50%);max-width:124px;font-size:11.5px;line-height:1.4;color:var(--mute);font-style:italic}
+.snip.l{left:20px}.snip.r{right:20px;text-align:right}
+.snip::before{content:'';display:block;width:14px;height:1px;background:var(--acc);margin-bottom:6px}
+.snip.r::before{margin-left:auto}
+.ghost{position:absolute;opacity:.09;pointer-events:none;transform:translate(-50%,-50%) rotate(var(--rr));filter:grayscale(1)}
+.enter .snip,.snip.in{animation:fade .7s var(--out) both}
 .act{position:absolute;transform:translateY(-50%);display:flex;flex-direction:column;gap:3px;max-width:120px;line-height:1.3}
 .act.l{left:20px}.act.r{right:20px;text-align:right}
 .act b{font-weight:600;color:var(--ink);letter-spacing:.08em}
@@ -401,16 +413,30 @@ function renderHome(opts={}){
   $('#pips').innerHTML=done?'':Array.from({length:n},(_,j)=>'<i class="'+(j<S.prog?'on':'')+(opts.pip===j?' pop':'')+'"></i>').join('');
   $('#playTxt').textContent=Math.min(S.unlocked,8)+' Paare · Los';
   $('#miniBtn').classList.toggle('due',S.round%2===0);
-  renderMap(opts.enter!==false);
+  opts_pip=opts.pip!=null;renderMap(opts.enter!==false);opts_pip=false;
 }
+let opts_pip=false;
 function renderMap(enter){
-  const map=$('#map'),inn=$('#mapIn'),W=map.clientWidth||360,gap=136,pad=90,cnt=Math.min(ALL,S.unlocked+3);
+  const map=$('#map'),inn=$('#mapIn'),W=map.clientWidth||360,gap=168,pad=90,cnt=Math.min(ALL,S.unlocked+3);
   const H=pad*2+gap*(cnt-1);inn.style.height=H+'px';P=[];
   for(let i=0;i<cnt;i++)P.push([W/2+(i%2?1:-1)*W*.2,H-pad-i*gap]);
   const seg=(a,b)=>{const my=(a[1]+b[1])/2;return 'M'+a[0]+' '+a[1]+'C'+a[0]+' '+my+' '+b[0]+' '+my+' '+b[0]+' '+b[1]};
   let svg='<svg width="'+W+'" height="'+H+'" aria-hidden="true">';
   for(let i=1;i<cnt;i++){const c=i<S.unlocked?'p-done':i===S.unlocked?'p-next':'p-fut';svg+='<path class="'+c+'" d="'+seg(P[i-1],P[i])+'"/>'}
+  /* Runden als Punkte auf jedem Wegstück */
+  const tmp=document.createElementNS('http://www.w3.org/2000/svg','path');
+  for(let i=1;i<cnt;i++){const n=NEED[Math.min(i-1,NEED.length-1)],d=seg(P[i-1],P[i]);tmp.setAttribute('d',d);const L=tmp.getTotalLength?tmp.getTotalLength():0;if(!L)break;
+    for(let j=0;j<n;j++){const pt=tmp.getPointAtLength(L*(j+1)/(n+1)),cur=i===S.unlocked,on=i<S.unlocked||(cur&&j<S.prog);
+      svg+='<circle class="rd'+(on?' on':'')+(cur?' cur':'')+(i>S.unlocked?' fut':'')+(cur&&j===S.prog-1&&opts_pip?' pop':'')+'" cx="'+pt.x.toFixed(1)+'" cy="'+pt.y.toFixed(1)+'" r="'+(cur?4.5:3.5)+'"/>'}}
   let h=svg+'</svg>';
+  /* blasse Zeichnungen am Rand */
+  const DK=((C.deko||{}).ornamente||[]).map(o=>'../'+(typeof o==='string'?o:o.datei));
+  for(let i=0;i<cnt-1&&DK.length;i++){const y=(P[i][1]+P[i+1][1])/2-20,left=i%2===0;
+    h+='<img class="ghost" src="'+DK[i%DK.length]+'" alt="" style="left:'+(left?6:W-6)+'px;top:'+y+'px;width:150px;--rr:'+((i*47)%30-15)+'deg">'}
+  /* Geschichte am Weg: Anfang des Bildtexts neben jedem gegangenen Stück */
+  for(let i=1;i<Math.min(cnt,S.unlocked);i++){const up=P[i],y=(P[i-1][1]+P[i][1])/2-46,side=up[0]<W/2?'r':'l';
+    let t=STEP(i).split(/(?<=[.!?])\s/)[0];if(t.length>52)t=t.slice(0,50).replace(/\s\S*$/,'')+' …';
+    h+='<div class="snip '+side+(enter?' in':'')+'" style="top:'+y+'px;animation-delay:'+(.3+(cnt-i)*.05)+'s">'+t+'</div>'}
   C.journey.acts.forEach(a=>{const i=a.from-1;if(i>=0&&i<cnt){const [nm,tt]=a.title.de.split(' · ');h+='<div class="act cap '+(P[i][0]<W/2?'r':'l')+'" style="top:'+P[i][1]+'px"><span>'+nm+'</span><b>'+(tt||'')+'</b></div>'}});
   for(let i=0;i<cnt;i++){const [x,y]=P[i],st='left:'+x+'px;top:'+y+'px;animation-delay:'+(enter?(cnt-1-i)*.06:0)+'s';
     if(i<S.unlocked)h+='<button class="st'+(S.fresh===i?' fresh':enter?' in':'')+'" data-i="'+i+'" style="'+st+'" aria-label="Bild '+(i+1)+': '+T(i)+'"><img src="'+IM(i)+'" alt=""><span class="lbl"><b>'+two(i+1)+'</b>'+T(i)+'</span></button>';
