@@ -24,7 +24,7 @@
   --bg:#EEECE7;--panel:#E4E1DA;--card:#fff;--ink:#1F1F1D;--mute:#8C8980;--soft:#55524B;--line:#D6D2C9;--line2:#EFECE6;--dot:#CFCBC1;
   --acc:#E8572A;--dark:#262624;
   --r:999px;--ease:cubic-bezier(.4,0,.2,1);--spring:cubic-bezier(.2,1.25,.4,1);--out:cubic-bezier(.2,.8,.2,1);
-  --top:calc(env(safe-area-inset-top) + 14px);--tabh:66px;--bot:env(safe-area-inset-bottom)}
+  --top:calc(env(safe-area-inset-top) + 14px);--tabh:62px;--tabspace:calc(var(--tabh) + var(--bot) * .55 + 10px);--bot:env(safe-area-inset-bottom)}
 html.big{font-size:112.5%}
 html.shortvp{--bot:0px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -41,7 +41,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
 [hidden]{display:none!important}
 
 /* ---------- Ansichten ---------- */
-.view{position:absolute;inset:0;display:flex;flex-direction:column;gap:14px;padding:var(--top) 20px calc(var(--tabh) + var(--bot) + 18px);
+.view{position:absolute;inset:0;display:flex;flex-direction:column;gap:14px;padding:var(--top) 20px calc(var(--tabspace) + 16px);
   opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .35s var(--ease),transform .45s var(--out),visibility 0s .35s}
 .view.on{opacity:1;visibility:visible;transform:none;transition:opacity .35s var(--ease),transform .45s var(--out),visibility 0s}
 .view.full{padding-bottom:calc(var(--bot) + 16px)}
@@ -83,11 +83,19 @@ img{-webkit-user-drag:none;user-select:none;-webkit-user-select:none;-webkit-tou
 .row{display:flex;gap:12px;align-items:center}
 
 /* Tab-Leiste */
-.tabs{position:absolute;z-index:20;left:0;right:0;bottom:0;height:calc(var(--tabh) + var(--bot));padding:0 12px var(--bot);display:flex;background:var(--bg);border-top:1px solid var(--line);transition:transform .45s var(--out)}
-.tabs.off{transform:translateY(110%)}
-.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:.594rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);transition:color .25s}
-.tabs button[aria-current]{color:var(--ink)}
-.tabs .ind{position:absolute;top:7px;left:0;width:5px;height:5px;border-radius:50%;background:var(--acc);transition:transform .5s var(--spring)}
+/* Schwebende Tab-Leiste: weiße Pille, die Kapsel gleitet zum aktiven Tab */
+.tabs{position:absolute;z-index:20;left:16px;right:16px;bottom:calc(var(--bot) * .55 + 10px);height:var(--tabh);padding:6px;display:flex;gap:2px;border-radius:var(--r);
+  background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  box-shadow:0 1px 0 rgba(0,0,0,.04),0 10px 30px rgba(40,30,20,.10),inset 0 0 0 1px rgba(255,255,255,.6);transition:transform .5s var(--out),opacity .3s}
+.tabs.off{transform:translateY(160%);opacity:0}
+.tabs button{position:relative;z-index:1;flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--r);color:var(--mute);font-size:.8125rem;font-weight:600;letter-spacing:-.005em;transition:flex .5s var(--spring),color .3s}
+.tabs button span{max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .5s var(--spring),opacity .3s}
+.tabs button[aria-current]{flex:1.9;color:var(--ink)}
+.tabs button[aria-current] span{max-width:110px;opacity:1}
+.tabs .ti{position:relative;display:grid;place-items:center;font-style:normal}
+.tabs .ti::after{content:'';position:absolute;top:-3px;right:-4px;width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 2px var(--bg);transform:scale(0);transition:transform .45s var(--spring)}
+.tabs button[aria-current] .ti::after{transform:scale(1)}
+.tabs .ind{position:absolute;z-index:0;top:6px;bottom:6px;left:0;width:0;border-radius:var(--r);background:var(--bg);transition:transform .5s var(--spring),width .5s var(--spring)}
 
 /* ---------- Start: Weg ---------- */
 .map{flex:1;min-height:0;position:relative;overflow-y:auto;overflow-x:hidden;margin:0 -20px;scrollbar-width:none;
@@ -374,7 +382,7 @@ html,body,.app,.tabs{transition:background-color 1.2s var(--ease)}
 .slide .segc button{height:46px;font-size:.9375rem}
 
 /* ---------- Hinweis ---------- */
-.toast{position:absolute;z-index:70;left:16px;right:16px;bottom:calc(var(--tabh) + var(--bot) + 14px);background:var(--dark);color:var(--bg);border-radius:20px;padding:12px 12px 12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.875rem;transform:translateY(160%);visibility:hidden;pointer-events:none;transition:transform .5s var(--out),visibility 0s .5s}
+.toast{position:absolute;z-index:70;left:16px;right:16px;bottom:calc(var(--tabspace) + 12px);background:var(--dark);color:var(--bg);border-radius:20px;padding:12px 12px 12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.875rem;transform:translateY(160%);visibility:hidden;pointer-events:none;transition:transform .5s var(--out),visibility 0s .5s}
 .toast.on{transform:none;visibility:visible;pointer-events:auto;transition:transform .5s var(--out)}
 .toast button{background:var(--acc);color:#fff;border-radius:var(--r);padding:10px 16px;font-weight:600;font-size:.8125rem}
 
@@ -479,10 +487,10 @@ html,body,.app,.tabs{transition:background-color 1.2s var(--ease)}
 
   <nav class="tabs" id="tabs">
     <span class="ind" id="ind"></span>
-    <button data-v="home"><svg class="ico" viewBox="0 0 24 24"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="7" r="3"/><path d="M9.5 15.5l5-7"/></svg><span data-t="tabPlay"></span></button>
-    <button data-v="col"><svg class="ico" viewBox="0 0 24 24"><circle cx="7.5" cy="7.5" r="3.5"/><circle cx="16.5" cy="7.5" r="3.5"/><circle cx="7.5" cy="16.5" r="3.5"/><circle cx="16.5" cy="16.5" r="3.5"/></svg><span data-t="tabCol"></span></button>
-    <button data-v="stats"><svg class="ico" viewBox="0 0 24 24"><path d="M6 19V13M12 19V6M18 19v-9"/></svg><span data-t="tabStats"></span></button>
-    <button data-v="set"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg><span data-t="tabSet"></span></button>
+    <button data-v="home"><i class="ti"><svg class="ico" viewBox="0 0 24 24"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="7" r="3"/><path d="M9.5 15.5l5-7"/></svg></i><span data-t="tabPlay"></span></button>
+    <button data-v="col"><i class="ti"><svg class="ico" viewBox="0 0 24 24"><circle cx="7.5" cy="7.5" r="3.5"/><circle cx="16.5" cy="7.5" r="3.5"/><circle cx="7.5" cy="16.5" r="3.5"/><circle cx="16.5" cy="16.5" r="3.5"/></svg></i><span data-t="tabCol"></span></button>
+    <button data-v="stats"><i class="ti"><svg class="ico" viewBox="0 0 24 24"><path d="M6 19V13M12 19V6M18 19v-9"/></svg></i><span data-t="tabStats"></span></button>
+    <button data-v="set"><i class="ti"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></i><span data-t="tabSet"></span></button>
   </nav>
 
   <div class="sheet" id="win" role="dialog" aria-modal="true"><div class="pane" id="winPane"></div></div>
@@ -532,7 +540,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
 }
 
 /* ===================== Grunddaten ===================== */
-const VERSION='3.1.2';
+const VERSION='3.2.0';
 const C=window.CONTENT||{images:[],journey:{acts:[]},people:[]};
 const IMGS=C.images.map((_,i)=>'img/t'+(i+1)+'.webp?v=211'),ALL=IMGS.length,MAXP=8,NEED=[2,3,3,4,4,5,5,6];
 const STAGE_RULES=[{peek:1300,rot:1},{peek:1100,rot:1,swap:1},{peek:900,rot:1,swap:1,lives:3},{peek:0,rot:1,swap:1,lives:5}];
@@ -578,6 +586,7 @@ function applyLang(){
   document.documentElement.lang=L;
   $$('[data-t]').forEach(e=>e.textContent=t(e.dataset.t));
   $$('[data-ta]').forEach(e=>e.setAttribute('aria-label',t(e.dataset.ta)));
+  $$('#tabs button').forEach(b=>b.setAttribute('aria-label',b.querySelector('span').textContent));
   $('#foot').innerHTML=esc(credits())+'<br>'+esc(copyLine())+'<br>'+esc(t('version',{v:VERSION}));
 }
 const credits=()=>PEOPLE().map(p=>loc(p.role)+': '+(p.name||'')).join(' · ');
@@ -642,7 +651,8 @@ function show(v,opts={}){
   if(v==='home')renderHome(opts);if(v==='col')renderCol();if(v==='stats')renderStats();if(v==='set')renderSet();
   const h={home:'#spielen',col:'#sammlung',stats:'#statistik',set:'#optionen'}[v];if(h&&location.hash!==h)history.replaceState(0,'',h);
 }
-function moveInd(){const b=$('#tabs button[aria-current]');if(!b)return;const r=b.getBoundingClientRect(),p=$('#tabs').getBoundingClientRect();if(r.width)$('#ind').style.transform='translateX('+(r.left-p.left+r.width/2-2.5)+'px)'}
+function moveInd(){const t0=performance.now(),step=()=>{placeInd();if(performance.now()-t0<600)requestAnimationFrame(step)};requestAnimationFrame(step)}
+function placeInd(){const b=$('#tabs button[aria-current]');if(!b)return;const r=b.getBoundingClientRect(),p=$('#tabs').getBoundingClientRect();if(r.width){const i=$('#ind');i.style.transition='none';i.style.width=r.width+'px';i.style.transform='translateX('+(r.left-p.left)+'px)'}}
 $$('#tabs button').forEach(b=>b.onclick=()=>{SND.tap();show(b.dataset.v)});
 function openSheet(id){$('#'+id).classList.add('on')}
 function closeSheet(id){$('#'+id).classList.remove('on')}
