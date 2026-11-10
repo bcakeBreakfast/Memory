@@ -12,11 +12,19 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 301; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 310; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
     title: { de: "Über das Projekt", en: "About the project" },
+    // Kurzer Satz unter den Namen
+    lead: { de: "Ein Projekt von zwei Menschen: eine zeichnet, einer gestaltet.", en: "A project by two people: one draws, one designs." },
+    // „So entsteht ein Bild“: drei kurze Schritte der Zusammenarbeit (Platzhalter, bitte selbst formulieren)
+    steps: [
+      { de: "[Zeichnung: Ella zeichnet jede Kachel mit Tusche auf Papier.]", en: "[Drawing: Ella draws every tile in ink on paper.]" },
+      { de: "[Übertragung: Die Zeichnung wird gescannt und behutsam digital aufbereitet.]", en: "[Transfer: the drawing is scanned and carefully prepared digitally.]" },
+      { de: "[Spiel: Max gestaltet daraus Weg, Geschichte und Spiel.]", en: "[Game: Max turns it into the path, the story and the game.]" }
+    ],
     text: {
       de: "[Wie Memo Punch entstanden ist: eine Zusammenarbeit aus Zeichnung und Gestaltung. Hier steht euer gemeinsamer Text.]",
       en: "[How Memo Punch came about: a collaboration between drawing and design. Your shared text goes here.]"
@@ -52,6 +60,7 @@ window.CONTENT = {
     {
       name: "Ella Strich",
       signature: "ES",
+      portrait: "",   // optional: Pfad zu einem Porträtfoto, z. B. "img/ella.webp" (quadratisch)
       role: { de: "Zeichnungen", en: "Drawings" },
       bio: {
         de: "[Text über die Zeichnerin: wer sie ist, wie die Tusche-Kacheln entstehen, was sie an Mustern reizt.]",
@@ -62,6 +71,7 @@ window.CONTENT = {
     {
       name: "Max Raster",
       signature: "MR",
+      portrait: "",
       role: { de: "Webdesign & Entwicklung", en: "Web design & development" },
       bio: {
         de: "[Text über dich: Gestaltung, Spielidee, Umsetzung als App.]",

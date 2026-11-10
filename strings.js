@@ -1,7 +1,7 @@
 /* memo punch · Oberflächentexte (Deutsch / Englisch)
    Die Geschichte, Bildtitel und Personen stehen in content.js.
    Platzhalter in geschweiften Klammern, z. B. {n}, werden automatisch ersetzt. */
-window.STR_BUILD = 301; // nicht ändern: gehört zur Version der App
+window.STR_BUILD = 310; // nicht ändern: gehört zur Version der App
 window.STR = {
 de: {
   appName: "memo punch", logoA: "memo", logoB: "punch!",
@@ -12,6 +12,9 @@ de: {
   next: "Nächstes Bild", stationAria: "Bild {n}: {title}", lockedAria: "Bild {n}, noch verborgen",
   until1: "1 Runde bis Bild {n}", untilN: "{r} Runden bis Bild {n}",
   allFound: "Alle Bilder gefunden",
+  gateNext: "Meisterrunde · {name} · dann Bild {n}", gatePlay: "Meister · {name}", gateShort: "Meister", gateTag: "Meisterrunde · {name}",
+  howMade: "So entsteht ein Bild", drawnBy: "Zeichnung · {name}", projectBy: "Ein Projekt von {names}",
+  gatePassed: "Meisterrunde bestanden", gateLost: "Die Meisterrunde wartet auf dich. Dein Fortschritt bleibt erhalten.",
   masterStatus: "Meister {n} von {of} · {name}",
   playPairs: "{n} Paare · Los", mini: "Mini", miniAria: "Mini-Spiel spielen", miniDue: "Mini-Spiel fällig",
   /* Spiel */
@@ -60,7 +63,7 @@ de: {
   skip: "Überspringen", continue: "Weiter", letsGo: "Los geht’s",
   pTag: "Prolog", pTitle: "Es war einmal eine Welt aus Tusche.",
   hTag: "So geht’s", hTitle: "Finde die Paare.", hText: "Merk dir die Bilder, deck sie auf, finde die gleichen. Jede gewonnene Runde bringt dich ein Stück weiter.",
-  wTag: "Der Weg", wTitle: "Jedes Bild erzählt weiter.", wText: "Nach ein paar Runden wartet ein neues Bild. Es kommt in deine Sammlung, mit einem Stück der Geschichte.",
+  wTag: "Der Weg", wTitle: "Jedes Bild erzählt weiter.", wText: "Nach ein paar Runden wartet ein neues Bild. Davor steht eine Meisterrunde mit einer besonderen Regel. Jedes Bild kommt in deine Sammlung, mit einem Stück der Geschichte.",
   sTag: "Deine Einstellungen", sTitle: "Spiel es auf deine Art.", sText: "Wähle hier, wie schwer es sein soll. Später findest du unter Optionen auch Ton, Sprache, ruhigere Bewegung und größere Schrift.",
   /* Mini-Spiele */
   miniBreak: "Kurze Pause", start: "Starten", best: "Bestwert {v}", newBest: "Neuer Bestwert", done: "Fertig", continueRound: "Weiter zu Runde {n}",
@@ -88,6 +91,9 @@ en: {
   next: "Next image", stationAria: "Image {n}: {title}", lockedAria: "Image {n}, still hidden",
   until1: "1 round to image {n}", untilN: "{r} rounds to image {n}",
   allFound: "All images found",
+  gateNext: "Master round · {name} · then image {n}", gatePlay: "Master · {name}", gateShort: "Master", gateTag: "Master round · {name}",
+  howMade: "How an image is made", drawnBy: "Drawing · {name}", projectBy: "A project by {names}",
+  gatePassed: "Master round passed", gateLost: "The master round is waiting for you. Your progress is kept.",
   masterStatus: "Master {n} of {of} · {name}",
   playPairs: "{n} pairs · Go", mini: "Mini", miniAria: "Play a mini game", miniDue: "Mini game due",
   beginner: "Beginner", pro: "Pro", masterTag: "Master · {name}",
@@ -130,7 +136,7 @@ en: {
   skip: "Skip", continue: "Next", letsGo: "Let’s go",
   pTag: "Prologue", pTitle: "Once upon a time there was a world made of ink.",
   hTag: "How it works", hTitle: "Find the pairs.", hText: "Remember the images, turn them over, find the matching ones. Every round you win takes you a little further.",
-  wTag: "The path", wTitle: "Every image tells more.", wText: "After a few rounds a new image is waiting. It goes into your collection, with a piece of the story.",
+  wTag: "The path", wTitle: "Every image tells more.", wText: "After a few rounds a new image is waiting. Before it comes a master round with a special rule. Every image goes into your collection, with a piece of the story.",
   sTag: "Your settings", sTitle: "Play it your way.", sText: "Choose how hard it should be. Later, under Settings, you will also find sound, language, calmer motion and larger text.",
   miniBreak: "Short break", start: "Start", best: "Best {v}", newBest: "New best", done: "Done", continueRound: "On to round {n}",
   watch: "Watch closely", yourTurn: "Your turn", longest: "Longest sequence without a mistake", maxReached: "Maximum reached",

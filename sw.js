@@ -2,7 +2,7 @@
    - Netz zuerst: neue Versionen und Texte kommen sofort an
    - Ohne Netz kommt alles aus dem Speicher (offline spielbar)
    - Neue Versionen übernehmen sofort, die Seite lädt sich danach selbst neu */
-const CACHE = 'memo-punch-3.0.2';
+const CACHE = 'memo-punch-3.1.0';
 const ASSETS = ["./","./index.html","./strings.js","./content.js","./manifest.webmanifest","./img/t1.webp","./img/t2.webp","./img/t3.webp","./img/t4.webp","./img/t5.webp","./img/t6.webp","./img/t7.webp","./img/t8.webp","./img/t9.webp","./img/t10.webp","./fonts/inter-400.woff2","./fonts/inter-600.woff2","./deko/spirale.svg","./deko/blatt.svg","./deko/blatt.svg","./deko/zweige.svg","./deko/stern.svg","./deko/beeren.svg","./deko/schnecke.svg","./deko/tropfen.svg","./deko/schleife.svg","./deko/ranke.svg","./deko/auge.svg","./icons/icon-192.png","./icons/icon-512.png","./icons/maskable-512.png","./icons/apple-touch-icon.png","./icons/favicon-32.png"];
 self.addEventListener('install', e => {
   self.skipWaiting();
