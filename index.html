@@ -454,8 +454,8 @@ body.calm .fx,body.calm .flash{display:none}
 @media (prefers-reduced-motion:reduce){.fx,.flash{display:none}*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
-<script src="i18n.js?v=223"></script>
-<script src="content.js?v=223"></script>
+<script src="i18n.js?v=230"></script>
+<script src="content.js?v=230"></script>
 </head>
 <body>
 <div id="app">
@@ -672,7 +672,7 @@ body.calm .fx,body.calm .flash{display:none}
 
 <script>
 /* ===== Selbstreparatur: passen die Textdateien nicht zu dieser Seite, alten Speicher leeren und einmal frisch laden ===== */
-const BUILD=223;
+const BUILD=230;
 if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.getItem('mp-fix-'+BUILD)){
   try{sessionStorage.setItem('mp-fix-'+BUILD,'1')}catch(e){}
   (async()=>{try{if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.unregister()))}
@@ -680,7 +680,7 @@ if((window.STR_BUILD!==BUILD||window.CONTENT_BUILD!==BUILD)&&!sessionStorage.get
     location.reload()})();
 }
 /* ===== Grunddaten ===== */
-const VERSION='2.2.3';
+const VERSION='2.3.0';
 const IMGS=[1,2,3,4,5,6,7,8,9,10].map(i=>'img/t'+i+'.webp?v=211');
 const ALL=IMGS.length,MAXP=8;
 const NEED=[2,3,3,4,4,5,5,6];
@@ -811,7 +811,9 @@ const J=()=>C.journey||{acts:[]};
 const actFor=i=>{let a=null;(J().acts||[]).forEach(x=>{if(i+1>=x.from)a=x});return a};
 const actStarts=i=>(J().acts||[]).some(x=>x.from===i+1);
 const stepText=i=>loc((C.images[i]||{}).step);
-const bossNext=()=>S.unlocked<ALL&&S.prog===need()-1;
+/* Prüfung mit Farbklecksen (Klecks-Memory) vor jedem neuen Bild. Derzeit ausgeschaltet: auf true setzen, um sie wieder einzuschalten. */
+const KLECKS_PRUEFUNG=false;
+const bossNext=()=>KLECKS_PRUEFUNG&&S.unlocked<ALL&&S.prog===need()-1;
 const BLOBS=['M50 16C67 14 84 26 85 44c2 19-10 35-28 39-18 4-36-2-43-18C7 49 14 31 28 22c7-4 14-6 22-6z',
   'M50 12c6 0 8 14 15 15s16-10 21-5-5 14 0 21 15 9 13 16-17 3-21 10-1 17-8 19-9-12-16-12-14 11-20 6 2-15-3-21-17-6-17-14 14-7 15-15-7-17 0-21 15 6 21 0 3-16 9-16z',
   'M50 10c11 17 28 30 28 49a28 28 0 0 1-56 0c0-19 17-32 28-49z'];
@@ -825,7 +827,7 @@ function renderHome(){
   $('#playLbl').textContent=boss?t('bossPlay',{n:S.unlocked+1}):t('playPairs',{n:Math.min(S.unlocked,MAXP)});
   if(st){$('#hStatus').textContent=t('stageLabel',{name:st.name})+' · '+st.info;$('#hPips').hidden=true}
   else{const r=need()-S.prog;$('#hPips').hidden=false;$('#hPips').innerHTML=pips(S.prog,need());
-    $('#hStatus').textContent=boss?t('bossReady',{n:S.unlocked+1}):(r-1===1?t('bossSoon1'):t('bossSoonN',{r:r-1}))}
+    $('#hStatus').textContent=KLECKS_PRUEFUNG?(boss?t('bossReady',{n:S.unlocked+1}):(r-1===1?t('bossSoon1'):t('bossSoonN',{r:r-1}))):(r===1?t('untilImage1',{n:S.unlocked+1}):t('untilImageN',{r,n:S.unlocked+1}))}
   renderMap();
 }
 function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}

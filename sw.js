@@ -2,7 +2,7 @@
    - Netz zuerst: neue Versionen und Texte kommen sofort an
    - Fällt das Netz aus, kommt alles aus dem Speicher (offline spielbar)
    - Neue Versionen übernehmen sofort (skipWaiting), die Seite lädt sich selbst neu */
-const CACHE = 'memo-punch-2.2.3';
+const CACHE = 'memo-punch-2.3.0';
 const ASSETS = [
   './', './index.html', './i18n.js', './content.js', './manifest.webmanifest',
   './img/t1.webp', './img/t2.webp', './img/t3.webp', './img/t4.webp', './img/t5.webp', './img/t6.webp', './img/t7.webp', './img/t8.webp', './img/t9.webp', './img/t10.webp',

@@ -1,9 +1,9 @@
 /* Memo Punch · Oberflächentexte Deutsch / Englisch. Platzhalter: {n}, {r} usw. */
-window.STR_BUILD = 223;
+window.STR_BUILD = 230;
 window.STR = {
 de: {
   difficulty: "Schwierigkeit", modeEasy: "Anfänger", modePro: "Profi",
-  modeNoteEasy: "Karten bleiben länger sichtbar, Prüfungen haben ein Leben mehr.",
+  modeNoteEasy: "Karten bleiben länger sichtbar, Meister-Stufen haben mehr Leben.",
   modeNotePro: "Kürzer zeigen. Ab Bild 4 tauschen Karten nach Fehlern und Fehler sind begrenzt, ab Bild 6 sind Karten gedreht.",
   jokerAria: "Joker: alle Karten kurz aufdecken, {n} übrig", combo: "Combo ×{n}", jokerWon: "+1 Joker",
   starsN: "{n} von 3 Sternen", starsTotal: "{n} Sterne gesamt",
@@ -63,7 +63,7 @@ de: {
   howTo: "So geht's", skip: "Überspringen", next: "Weiter", letsGo: "Los geht’s!",
   i1t: "Gut<br>hinschauen!", i1p: "Am Anfang liegen alle Karten kurz offen. Der Balken zeigt, wie lange noch.",
   i2t: "Paare<br>finden!", i2p: "Deck zwei Karten auf. Gleiches Bild? Paar! Sonst drehen sie sich wieder um.",
-  i3t: "Dem Klecks<br>folgen!", i3p: "Folge dem Klecks durch die Welt aus Tusche. Vor jedem neuen Bild wartet eine Prüfung: Finde die Karten mit dem gleichen Farbklecks.",
+  i3t: "Dem Klecks<br>folgen!", i3p: "Folge dem Klecks durch die Welt aus Tusche. Mit jedem neuen Bild geht die Geschichte ein Stück weiter.",
   newVersion: "Neue Version da!", reload: "Neu laden",
   iosTitle: "Auf den<br>Homebildschirm", ios1: "1. Unten in Safari auf <b>Teilen</b> tippen (Quadrat mit Pfeil nach oben).", ios2: "2. <b>Zum Home-Bildschirm</b> wählen und <b>Hinzufügen</b> tippen.", ios3: "Danach startet Memo Punch im Vollbild und läuft auch offline.", gotIt: "Alles klar",
   stages: [
@@ -86,7 +86,7 @@ de: {
 },
 en: {
   difficulty: "Difficulty", modeEasy: "Beginner", modePro: "Pro",
-  modeNoteEasy: "Cards stay visible longer, trials give you one extra life.",
+  modeNoteEasy: "Cards stay visible longer, master stages give you more lives.",
   modeNotePro: "Shorter peek. From image 4, cards swap after mistakes and mistakes are limited; from image 6, cards are rotated.",
   jokerAria: "Joker: reveal all cards briefly, {n} left", combo: "Combo ×{n}", jokerWon: "+1 Joker",
   starsN: "{n} of 3 stars", starsTotal: "{n} stars in total",
@@ -146,7 +146,7 @@ en: {
   howTo: "How to play", skip: "Skip", next: "Next", letsGo: "Let’s go!",
   i1t: "Look<br>closely!", i1p: "At the start, all cards are face up for a moment. The bar shows how long.",
   i2t: "Find<br>pairs!", i2p: "Turn over two cards. Same image? Pair! Otherwise they flip back.",
-  i3t: "Follow<br>the blot!", i3p: "Follow the blot through the world of ink. Before each new image there is a trial: match the cards with the same blot of colour.",
+  i3t: "Follow<br>the blot!", i3p: "Follow the blot through the world of ink. With every new image the story moves on.",
   newVersion: "New version!", reload: "Reload",
   iosTitle: "Add to<br>home screen", ios1: "1. Tap <b>Share</b> at the bottom of Safari (square with an arrow).", ios2: "2. Choose <b>Add to Home Screen</b> and tap <b>Add</b>.", ios3: "Memo Punch then opens full screen and works offline.", gotIt: "Got it",
   stages: [
