@@ -1,7 +1,7 @@
 /* memo punch · Oberflächentexte (Deutsch / Englisch)
    Die Geschichte, Bildtitel und Personen stehen in content.js.
    Platzhalter in geschweiften Klammern, z. B. {n}, werden automatisch ersetzt. */
-window.STR_BUILD = 310; // nicht ändern: gehört zur Version der App
+window.STR_BUILD = 330; // nicht ändern: gehört zur Version der App
 window.STR = {
 de: {
   appName: "memo punch", logoA: "memo", logoB: "punch!",
@@ -45,7 +45,8 @@ de: {
   /* Optionen */
   setTitle: "Optionen", difficulty: "Schwierigkeit",
   modeNoteEasy: "Bilder bleiben länger sichtbar", modeNotePro: "Kürzer zeigen, Tauschen, begrenzte Fehler",
-  language: "Sprache", sound: "Ton", soundSub: "Weiche Klänge beim Spielen",
+  language: "Sprache", appearance: "Darstellung", thAuto: "Auto", thLight: "Hell", thDark: "Dunkel",
+  silentHint: "Kein Ton? Der Lautlos-Schalter schaltet die Klänge stumm. In den Optionen kannst du das ändern.", sound: "Ton", soundSub: "Weiche Klänge beim Spielen",
   loud: "Ton auch bei Lautlos", loudSub: "Sonst schaltet der Lautlos-Schalter den Ton stumm",
   haptic: "Vibration", hapticSub: "Kurzes Signal bei Treffern", hapticIOS: "Feines Klicken beim Tippen, je nach iOS-Version",
   calm: "Ruhige Bewegung", calmSub: "Animationen fast aus",
@@ -119,7 +120,8 @@ en: {
   bestTimes: "Best times", pairsN: "{n} pairs", movesN: "{n} moves", minisTitle: "Mini games", lengthN: "Length {n}", pointsN: "{n} pts",
   setTitle: "Settings", difficulty: "Difficulty",
   modeNoteEasy: "Images stay visible longer", modeNotePro: "Shorter peek, swapping, limited mistakes",
-  language: "Language", sound: "Sound", soundSub: "Soft sounds while playing",
+  language: "Language", appearance: "Appearance", thAuto: "Auto", thLight: "Light", thDark: "Dark",
+  silentHint: "No sound? The silent switch mutes the sounds. You can change this in Settings.", sound: "Sound", soundSub: "Soft sounds while playing",
   loud: "Sound in silent mode", loudSub: "Otherwise the silent switch mutes the sound",
   haptic: "Vibration", hapticSub: "Short buzz on matches", hapticIOS: "Subtle tick when tapping, depending on iOS version",
   calm: "Calm motion", calmSub: "Animations almost off",

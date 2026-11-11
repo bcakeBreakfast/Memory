@@ -12,7 +12,7 @@
     gestrichelt markiert, bis du sie ersetzt.
   - Die Reihenfolge entspricht den Dateien img/t1.svg bis img/t10.svg.
 */
-window.CONTENT_BUILD = 310; // technische Kennung, bitte nicht ändern
+window.CONTENT_BUILD = 330; // technische Kennung, bitte nicht ändern
 window.CONTENT = {
   // Über das Projekt: kurzer Text zur Zusammenarbeit
   project: {
